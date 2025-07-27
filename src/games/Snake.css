@@ -33,21 +33,23 @@
 
 .score {
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #00f5ff;
   padding: 0.5rem 1rem;
-  background: rgba(0, 245, 255, 0.1);
-  border: 1px solid rgba(0, 245, 255, 0.3);
+  background: rgba(0, 245, 255, 0.2);
+  border: 2px solid rgba(0, 245, 255, 0.5);
   border-radius: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 245, 255, 0.3);
 }
 
 canvas {
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.5);
   border-radius: 12px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.4);
+    inset 0 2px 4px rgba(0, 0, 0, 0.4),
+    0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .game-controls {
@@ -61,16 +63,19 @@ canvas {
 .game-message {
   text-align: center;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .game-message p {
   margin: 0 0 1rem 0;
-  color: #b8b8b8;
+  color: #ffffff;
   font-size: 1rem;
   line-height: 1.4;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .game-over {
@@ -128,5 +133,7 @@ canvas {
     max-width: 320px;
     height: auto;
   }
+
+  
 }
   

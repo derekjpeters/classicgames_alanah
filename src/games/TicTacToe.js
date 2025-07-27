@@ -9,6 +9,8 @@ const TicTacToe = () => {
   const [gameState, setGameState] = useState('playing'); // 'playing', 'won', 'draw'
   const [winningLine, setWinningLine] = useState(null);
   const [scores, setScores] = useState({ X: 0, O: 0, draws: 0 });
+  const [matchWinner, setMatchWinner] = useState(null);
+  const [gameNumber, setGameNumber] = useState(1);
 
   const winner = calculateWinner(board);
   const isDraw = !winner && board.every(square => square !== null);
@@ -16,11 +18,17 @@ const TicTacToe = () => {
   useEffect(() => {
     if (winner) {
       setGameState('won');
-      setScores(prev => ({
-        ...prev,
-        [winner.winner]: prev[winner.winner] + 1
-      }));
+      const newScores = {
+        ...scores,
+        [winner.winner]: scores[winner.winner] + 1
+      };
+      setScores(newScores);
       setWinningLine(winner.line);
+      
+      // Check if someone won the match (best of 5)
+      if (newScores[winner.winner] >= 3) {
+        setMatchWinner(winner.winner);
+      }
     } else if (isDraw) {
       setGameState('draw');
       setScores(prev => ({
@@ -28,7 +36,7 @@ const TicTacToe = () => {
         draws: prev.draws + 1
       }));
     }
-  }, [winner, isDraw]);
+  }, [winner, isDraw, scores]);
 
   function handleClick(index) {
     if (board[index] || gameState !== 'playing') return;
@@ -40,15 +48,29 @@ const TicTacToe = () => {
   }
 
   function resetGame() {
+    if (matchWinner) {
+      // If there's a match winner, reset everything
+      setScores({ X: 0, O: 0, draws: 0 });
+      setMatchWinner(null);
+      setGameNumber(1);
+    } else {
+      // Otherwise just start next game in the match
+      setGameNumber(prev => prev + 1);
+    }
     setBoard(initialBoard);
     setXIsNext(true);
     setGameState('playing');
     setWinningLine(null);
   }
 
-  function resetScores() {
+  function resetMatch() {
     setScores({ X: 0, O: 0, draws: 0 });
-    resetGame();
+    setMatchWinner(null);
+    setGameNumber(1);
+    setBoard(initialBoard);
+    setXIsNext(true);
+    setGameState('playing');
+    setWinningLine(null);
   }
 
   const getSquareClass = (index) => {
@@ -63,19 +85,25 @@ const TicTacToe = () => {
   };
 
   const getStatusMessage = () => {
+    if (matchWinner) {
+      return `🏆 Player ${matchWinner} Wins the Match!`;
+    }
     if (winner) {
-      return `🎉 Player ${winner.winner} Wins!`;
+      return `🎉 Player ${winner.winner} Wins Game ${gameNumber}!`;
     }
     if (isDraw) {
-      return "🤝 It's a Draw!";
+      return `🤝 Game ${gameNumber} is a Draw!`;
     }
-    return `Next: Player ${xIsNext ? 'X' : 'O'}`;
+    return `Game ${gameNumber} - Next: Player ${xIsNext ? 'X' : 'O'}`;
   };
 
   return (
     <div className="tictactoe-container">
       <div className="game-header">
-        <h2>Tic Tac Toe</h2>
+        <h2>Tic Tac Toe - Best of 5</h2>
+        <div className="match-info">
+          <p>First to win 3 games wins the match!</p>
+        </div>
         <div className="scoreboard">
           <div className="score-item">
             <span className="score-label">Player X</span>
@@ -96,7 +124,7 @@ const TicTacToe = () => {
         <div className={`status ${gameState}`}>
           {getStatusMessage()}
         </div>
-        {gameState === 'playing' && (
+        {gameState === 'playing' && !matchWinner && (
           <div className="current-player">
             <span className={`player-indicator ${xIsNext ? 'x' : 'o'}`}>
               {xIsNext ? 'X' : 'O'}
@@ -125,12 +153,20 @@ const TicTacToe = () => {
       </div>
 
       <div className="game-controls">
-        <button className="game-btn new-round-btn" onClick={resetGame}>
-          New Round
-        </button>
-        <button className="game-btn reset-scores-btn" onClick={resetScores}>
-          Reset Scores
-        </button>
+        {matchWinner ? (
+          <button className="game-btn new-match-btn" onClick={resetMatch}>
+            New Match
+          </button>
+        ) : (
+          <>
+            <button className="game-btn new-round-btn" onClick={resetGame}>
+              {gameState === 'playing' ? 'Reset Game' : 'Next Game'}
+            </button>
+            <button className="game-btn reset-match-btn" onClick={resetMatch}>
+              Reset Match
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

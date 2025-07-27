@@ -15,7 +15,7 @@
   font-size: clamp(3rem, 10vw, 5rem);
   font-weight: 800;
   margin: 0 0 1rem 0;
-  background: linear-gradient(135deg, var(--accent-color), #ff6b6b, #4ecdc4);
+  background: linear-gradient(135deg, #681ad5, #005a88, #014d4c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -25,7 +25,7 @@
 
 .home-subtitle {
   font-size: 1.3rem;
-  color: var(--text-secondary);
+  color: #ffffff;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;

@@ -1,9 +1,9 @@
 :root {
-  --primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-bg: linear-gradient(135deg, #66eac9 0%, #270462 100%);
   --secondary-bg: rgba(255, 255, 255, 0.1);
   --accent-color: #00f5ff;
   --text-primary: #ffffff;
-  --text-secondary: #b8b8b8;
+  --text-secondary: #dddddd;
   --border-radius: 16px;
   --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
   --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -69,9 +69,10 @@ body {
 
 .App-header p {
   font-size: 1.2rem;
-  color: var(--text-secondary);
+  color: #ffffff;
   margin: 0.5rem 0 0 0;
-  font-weight: 300;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .games-container {
@@ -109,9 +110,11 @@ body {
 }
 
 .game-card p {
-  color: var(--text-secondary);
+  color: #ffffff;
   line-height: 1.6;
   margin: 0;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 @media (max-width: 768px) {
@@ -179,25 +182,29 @@ body {
 }
 
 .nav-link {
-  color: var(--text-secondary);
+  display: inline-block;
+  color: #ffffff;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.75rem 1.25rem;
   border-radius: 10px;
   transition: var(--transition);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.2);
   font-size: 0.95rem;
   position: relative;
   overflow: hidden;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .nav-link:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: var(--accent-color);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 245, 255, 0.3);
 }
 
 .nav-link.active {

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import './App.css';
 import Home from "./components/Home";
 import TicTacToe from "./games/TicTacToe";
 import Snake from "./games/Snake";
