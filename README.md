@@ -1,70 +1,199 @@
-# Getting Started with Create React App
+# 🎮 Classic Games Collection
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern recreation of timeless arcade classics built with React. Experience the nostalgia of Snake, Pong, and Tic Tac Toe with contemporary design and smooth gameplay.
 
-## Available Scripts
+## 🌟 Features
 
-In the project directory, you can run:
+### 🎯 **Modern Game Library**
+- **Snake** - Guide the snake to eat food and grow longer while avoiding walls
+- **Pong** - Classic paddle game with AI opponent and score tracking  
+- **Tic Tac Toe** - Strategic gameplay with win detection and score persistence
 
-### `npm start`
+### ✨ **Contemporary Design**
+- **Glassmorphism UI** with backdrop blur effects
+- **Responsive design** that works on all devices
+- **Smooth animations** and hover effects
+- **Modern color palette** with gradient accents
+- **Accessibility support** for reduced motion preferences
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🎮 **Enhanced Gameplay**
+- **Score tracking** across games and sessions
+- **Game state management** (start, pause, reset functionality)
+- **Visual feedback** with winning animations
+- **Intuitive controls** optimized for both desktop and mobile
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 Getting Started
 
-### `npm test`
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Installation
 
-### `npm run build`
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/derekjpeters/classicgames_alanah.git
+   cd classicgames_alanah
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. **Start the development server**
+   ```bash
+   npm start
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. **Open your browser**
+   Navigate to `http://localhost:3000` to see the application
 
-### `npm run eject`
+### Building for Production
+```bash
+npm run build
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🎮 How to Play
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 🐍 Snake
+1. Click "Start Game" to begin
+2. Use arrow keys to control the snake
+3. Eat the red food to grow and increase your score
+4. Avoid hitting the walls or yourself
+5. Click "Reset Game" to start over
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 🏓 Pong
+1. Click "Start Game" to begin
+2. Move your mouse to control the left paddle
+3. Try to score points by getting the ball past the AI
+4. First player to 5 points wins
+5. Press spacebar to pause, or use the pause button
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### ⭕ Tic Tac Toe
+1. Player X starts first
+2. Click on any empty square to place your mark
+3. Get three in a row (horizontally, vertically, or diagonally) to win
+4. Scores are tracked across multiple rounds
+5. Use "New Round" for a fresh game or "Reset Scores" to clear all scores
 
-## Learn More
+## 🛠️ Built With
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **React** - Frontend framework
+- **React Router** - Navigation and routing
+- **CSS3** - Modern styling with custom properties
+- **HTML5 Canvas** - Game rendering for Snake and Pong
+- **JavaScript ES6+** - Modern JavaScript features
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🎯 Game Features
 
-### Code Splitting
+### 🐍 Snake
+- **Classic Gameplay** - Eat food to grow, avoid walls and yourself
+- **Modern Graphics** - Rounded snake with gradient colors and animated eyes
+- **Score System** - Track your high scores
+- **Responsive Controls** - Arrow keys for smooth movement
+- **Game States** - Start screen, pause functionality, and game over
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 🏓 Pong
+- **AI Opponent** - Challenging computer player
+- **Score Tracking** - First to 5 points wins
+- **Mouse Controls** - Move your paddle with mouse movement
+- **Pause Feature** - Press spacebar to pause/resume
+- **Modern Graphics** - Gradient paddles and glowing ball effects
 
-### Analyzing the Bundle Size
+### ⭕ Tic Tac Toe
+- **Two Player Mode** - Take turns placing X's and O's
+- **Win Detection** - Automatic winner detection with animations
+- **Score Persistence** - Track wins across multiple rounds
+- **Visual Feedback** - Winning line highlighting and celebrations
+- **Responsive Grid** - Works perfectly on mobile devices
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📱 Mobile Support
 
-### Making a Progressive Web App
+The application is fully responsive and optimized for:
+- **Desktop** (1200px+)
+- **Tablet** (768px - 1199px)  
+- **Mobile** (320px - 767px)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Mobile Features
+- Touch-friendly controls
+- Optimized game sizes
+- Responsive navigation
+- Reduced motion support
 
-### Advanced Configuration
+## 🎨 Design System
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Color Palette
+- **Primary**: Linear gradient from #667eea to #764ba2
+- **Accent**: #00f5ff (Cyan)
+- **Secondary**: #ff6b6b (Coral)
+- **Success**: #4ecdc4 (Teal)
+- **Warning**: #ffc107 (Amber)
 
-### Deployment
+### Typography
+- **Primary Font**: Inter, system fonts
+- **Weight Range**: 300 (Light) to 800 (Extra Bold)
+- **Responsive Sizing**: clamp() functions for fluid typography
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🔧 Development
 
-### `npm run build` fails to minify
+### Project Structure
+```
+src/
+├── components/
+│   ├── Home.js          # Landing page component
+│   └── Home.css         # Landing page styles
+├── games/
+│   ├── Snake.js         # Snake game logic
+│   ├── Snake.css        # Snake game styles
+│   ├── Pong.js          # Pong game logic
+│   ├── Pong.css         # Pong game styles
+│   ├── TicTacToe.js     # Tic Tac Toe logic
+│   └── TicTacToe.css    # Tic Tac Toe styles
+├── App.js               # Main app component
+├── App.css              # Global styles and navigation
+└── index.js             # App entry point
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Key Technologies
+- **React Hooks** - useState, useEffect, useCallback, useRef
+- **React Router** - Browser routing with useLocation
+- **CSS Custom Properties** - Consistent theming
+- **Canvas API** - Game rendering and animations
+- **CSS Grid & Flexbox** - Modern layout techniques
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Development Guidelines
+1. Follow the existing code style and structure
+2. Add comments for complex game logic
+3. Test on multiple screen sizes
+4. Ensure accessibility compliance
+5. Update documentation as needed
+
+## 👨‍💻 Author
+
+**Derek Peters**
+- GitHub: [@derekjpeters](https://github.com/derekjpeters)
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 📈 Roadmap
+
+Future enhancements planned:
+- [ ] High score persistence with localStorage
+- [ ] Sound effects and background music
+- [ ] Additional games (Tetris, Pac-Man style)
+- [ ] Multiplayer support
+- [ ] Progressive Web App features
+- [ ] Leaderboards and achievements
+
+---
+
+<p align="center">
+  Made with ❤️ and React
+</p>
