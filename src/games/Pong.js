@@ -6,13 +6,21 @@ const Pong = () => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   
-  const [gameState, setGameState] = useState('start'); // 'start', 'playing', 'paused', 'gameOver'
+  const [gameState, setGameState] = useState('start'); // 'start', 'serving', 'playing', 'paused', 'gameOver'
   const [playerScore, setPlayerScore] = useState(0);
   const [aiScore, setAiScore] = useState(0);
+  const [difficulty, setDifficulty] = useState('medium');
   
   const canvasWidth = 600;
   const canvasHeight = 400;
   const winningScore = 5;
+
+  const difficultySettings = {
+    easy: { aiSpeed: 2, ballSpeed: 3, aiAccuracy: 0.7 },
+    medium: { aiSpeed: 4, ballSpeed: 5, aiAccuracy: 0.85 },
+    hard: { aiSpeed: 6, ballSpeed: 7, aiAccuracy: 0.95 },
+    nuclear: { aiSpeed: 8, ballSpeed: 9, aiAccuracy: 1.0 }
+  };
 
   const gameData = useRef({
     paddleHeight: 75,
@@ -24,28 +32,48 @@ const Pong = () => {
     ballSpeedX: 5,
     ballSpeedY: 4,
     ballRadius: 8,
-    aiSpeed: 4
+    aiSpeed: 4,
+    serving: false
   });
 
   const resetBall = useCallback(() => {
     const data = gameData.current;
+    const settings = difficultySettings[difficulty];
     data.ballX = canvasWidth / 2;
     data.ballY = canvasHeight / 2;
-    data.ballSpeedX = Math.random() > 0.5 ? 5 : -5;
+    data.ballSpeedX = 0;
+    data.ballSpeedY = 0;
+    data.serving = true;
+    setGameState('serving');
+  }, [difficulty]);
+
+  const serveBall = useCallback(() => {
+    const data = gameData.current;
+    const settings = difficultySettings[difficulty];
+    data.ballSpeedX = Math.random() > 0.5 ? settings.ballSpeed : -settings.ballSpeed;
     data.ballSpeedY = (Math.random() - 0.5) * 6;
-  }, []);
+    data.serving = false;
+    setGameState('playing');
+  }, [difficulty]);
 
   const resetGame = useCallback(() => {
     setPlayerScore(0);
     setAiScore(0);
     setGameState('start');
-    resetBall();
-  }, [resetBall]);
+    const data = gameData.current;
+    data.ballX = canvasWidth / 2;
+    data.ballY = canvasHeight / 2;
+    data.ballSpeedX = 0;
+    data.ballSpeedY = 0;
+    data.serving = false;
+  }, []);
 
   const startGame = useCallback(() => {
-    setGameState('playing');
+    const data = gameData.current;
+    const settings = difficultySettings[difficulty];
+    data.aiSpeed = settings.aiSpeed;
     resetBall();
-  }, [resetBall]);
+  }, [resetBall, difficulty]);
 
   const pauseGame = useCallback(() => {
     setGameState(gameState === 'paused' ? 'playing' : 'paused');
@@ -152,15 +180,21 @@ const Pong = () => {
         data.ballSpeedY = hitPosition * 6;
       }
 
-      // AI movement with some imperfection
+      // AI movement with difficulty-based accuracy
+      const settings = difficultySettings[difficulty];
       const aiCenter = data.rightY + data.paddleHeight / 2;
       const ballDistance = data.ballY - aiCenter;
       
-      if (Math.abs(ballDistance) > 5) {
-        if (ballDistance > 0) {
-          data.rightY += Math.min(data.aiSpeed, ballDistance);
+      // Add some randomness based on difficulty
+      const accuracy = settings.aiAccuracy;
+      const targetY = data.ballY + (Math.random() - 0.5) * (1 - accuracy) * 50;
+      const adjustedDistance = targetY - aiCenter;
+      
+      if (Math.abs(adjustedDistance) > 5) {
+        if (adjustedDistance > 0) {
+          data.rightY += Math.min(data.aiSpeed, adjustedDistance);
         } else {
-          data.rightY += Math.max(-data.aiSpeed, ballDistance);
+          data.rightY += Math.max(-data.aiSpeed, adjustedDistance);
         }
       }
 
@@ -173,19 +207,21 @@ const Pong = () => {
           const newScore = prev + 1;
           if (newScore >= winningScore) {
             setGameState('gameOver');
+            return newScore;
           }
+          resetBall();
           return newScore;
         });
-        resetBall();
       } else if (data.ballX > canvasWidth) {
         setPlayerScore(prev => {
           const newScore = prev + 1;
           if (newScore >= winningScore) {
             setGameState('gameOver');
+            return newScore;
           }
+          resetBall();
           return newScore;
         });
-        resetBall();
       }
     };
 
@@ -253,6 +289,35 @@ const Pong = () => {
       <div className="game-controls">
         {gameState === 'start' && (
           <div className="game-message">
+            <div className="difficulty-selector">
+              <p>Choose Difficulty:</p>
+              <div className="difficulty-buttons">
+                <button 
+                  onClick={() => setDifficulty('easy')} 
+                  className={`difficulty-btn ${difficulty === 'easy' ? 'active' : ''}`}
+                >
+                  Easy
+                </button>
+                <button 
+                  onClick={() => setDifficulty('medium')} 
+                  className={`difficulty-btn ${difficulty === 'medium' ? 'active' : ''}`}
+                >
+                  Medium
+                </button>
+                <button 
+                  onClick={() => setDifficulty('hard')} 
+                  className={`difficulty-btn ${difficulty === 'hard' ? 'active' : ''}`}
+                >
+                  Hard
+                </button>
+                <button 
+                  onClick={() => setDifficulty('nuclear')} 
+                  className={`difficulty-btn ${difficulty === 'nuclear' ? 'active' : ''}`}
+                >
+                  Nuclear
+                </button>
+              </div>
+            </div>
             <p>Move your mouse to control the left paddle</p>
             <p>First to {winningScore} points wins!</p>
             <button onClick={startGame} className="game-btn start-btn">
@@ -285,12 +350,23 @@ const Pong = () => {
           </div>
         )}
 
+        {gameState === 'serving' && (
+          <div className="game-message">
+            <p className="serving">Ready to Serve</p>
+            <p>Difficulty: <span className="difficulty-display">{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</span></p>
+            <button onClick={serveBall} className="game-btn serve-btn">
+              Serve Ball
+            </button>
+          </div>
+        )}
+
         {gameState === 'playing' && (
           <div className="game-controls-playing">
             <button onClick={pauseGame} className="game-btn pause-btn">
               Pause
             </button>
             <span className="controls-hint">Press SPACE to pause</span>
+            <span className="difficulty-display">Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</span>
           </div>
         )}
       </div>

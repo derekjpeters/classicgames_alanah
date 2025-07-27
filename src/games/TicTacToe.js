@@ -11,35 +11,40 @@ const TicTacToe = () => {
   const [scores, setScores] = useState({ X: 0, O: 0, draws: 0 });
   const [matchWinner, setMatchWinner] = useState(null);
   const [gameNumber, setGameNumber] = useState(1);
+  const [playerNames, setPlayerNames] = useState({ X: 'Player X', O: 'Player O' });
+  const [showNameInput, setShowNameInput] = useState(false);
 
   const winner = calculateWinner(board);
   const isDraw = !winner && board.every(square => square !== null);
 
   useEffect(() => {
-    if (winner) {
+    if (winner && gameState === 'playing') {
       setGameState('won');
-      const newScores = {
-        ...scores,
-        [winner.winner]: scores[winner.winner] + 1
-      };
-      setScores(newScores);
       setWinningLine(winner.line);
-      
-      // Check if someone won the match (best of 5)
-      if (newScores[winner.winner] >= 3) {
-        setMatchWinner(winner.winner);
-      }
-    } else if (isDraw) {
+
+      setScores(prev => {
+        const updatedScores = {
+          ...prev,
+          [winner.winner]: prev[winner.winner] + 1
+        };
+
+        if (updatedScores[winner.winner] >= 3) {
+          setMatchWinner(winner.winner);
+        }
+
+        return updatedScores;
+      });
+    } else if (isDraw && gameState === 'playing') {
       setGameState('draw');
       setScores(prev => ({
         ...prev,
         draws: prev.draws + 1
       }));
     }
-  }, [winner, isDraw, scores]);
+  }, [winner, isDraw, gameState]);
 
   function handleClick(index) {
-    if (board[index] || gameState !== 'playing') return;
+    if (board[index] || gameState !== 'playing' || matchWinner) return;
 
     const newBoard = [...board];
     newBoard[index] = xIsNext ? 'X' : 'O';
@@ -49,12 +54,10 @@ const TicTacToe = () => {
 
   function resetGame() {
     if (matchWinner) {
-      // If there's a match winner, reset everything
       setScores({ X: 0, O: 0, draws: 0 });
       setMatchWinner(null);
       setGameNumber(1);
     } else {
-      // Otherwise just start next game in the match
       setGameNumber(prev => prev + 1);
     }
     setBoard(initialBoard);
@@ -73,6 +76,17 @@ const TicTacToe = () => {
     setWinningLine(null);
   }
 
+  function handleNameChange(player, name) {
+    setPlayerNames(prev => ({
+      ...prev,
+      [player]: name || `Player ${player}`
+    }));
+  }
+
+  function toggleNameInput() {
+    setShowNameInput(!showNameInput);
+  }
+
   const getSquareClass = (index) => {
     let className = 'square';
     if (board[index]) {
@@ -86,15 +100,15 @@ const TicTacToe = () => {
 
   const getStatusMessage = () => {
     if (matchWinner) {
-      return `🏆 Player ${matchWinner} Wins the Match!`;
+      return `🏆 ${playerNames[matchWinner]} Wins the Match!`;
     }
     if (winner) {
-      return `🎉 Player ${winner.winner} Wins Game ${gameNumber}!`;
+      return `🎉 ${playerNames[winner.winner]} Wins Game ${gameNumber}!`;
     }
     if (isDraw) {
       return `🤝 Game ${gameNumber} is a Draw!`;
     }
-    return `Game ${gameNumber} - Next: Player ${xIsNext ? 'X' : 'O'}`;
+    return `Game ${gameNumber} - Next: ${playerNames[xIsNext ? 'X' : 'O']}`;
   };
 
   return (
@@ -106,7 +120,7 @@ const TicTacToe = () => {
         </div>
         <div className="scoreboard">
           <div className="score-item">
-            <span className="score-label">Player X</span>
+            <span className="score-label">{playerNames.X}</span>
             <span className="score-value x">{scores.X}</span>
           </div>
           <div className="score-item">
@@ -114,10 +128,34 @@ const TicTacToe = () => {
             <span className="score-value draw">{scores.draws}</span>
           </div>
           <div className="score-item">
-            <span className="score-label">Player O</span>
+            <span className="score-label">{playerNames.O}</span>
             <span className="score-value o">{scores.O}</span>
           </div>
         </div>
+        {showNameInput && (
+          <div className="name-input-container">
+            <div className="name-input-group">
+              <label>Player X Name:</label>
+              <input
+                type="text"
+                value={playerNames.X === 'Player X' ? '' : playerNames.X}
+                onChange={(e) => handleNameChange('X', e.target.value)}
+                placeholder="Enter name for X"
+                maxLength="15"
+              />
+            </div>
+            <div className="name-input-group">
+              <label>Player O Name:</label>
+              <input
+                type="text"
+                value={playerNames.O === 'Player O' ? '' : playerNames.O}
+                onChange={(e) => handleNameChange('O', e.target.value)}
+                placeholder="Enter name for O"
+                maxLength="15"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="status-container">
@@ -136,11 +174,11 @@ const TicTacToe = () => {
       <div className="board-container">
         <div className="board">
           {board.map((square, i) => (
-            <button 
-              key={i} 
-              className={getSquareClass(i)} 
+            <button
+              key={i}
+              className={getSquareClass(i)}
               onClick={() => handleClick(i)}
-              disabled={gameState !== 'playing'}
+              disabled={gameState !== 'playing' || matchWinner}
             >
               {square && (
                 <span className="square-content">
@@ -153,6 +191,9 @@ const TicTacToe = () => {
       </div>
 
       <div className="game-controls">
+        <button className="game-btn name-btn" onClick={toggleNameInput}>
+          {showNameInput ? 'Hide Names' : 'Set Player Names'}
+        </button>
         {matchWinner ? (
           <button className="game-btn new-match-btn" onClick={resetMatch}>
             New Match
@@ -175,10 +216,10 @@ const TicTacToe = () => {
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
     [0, 4, 8], [2, 4, 6]             // diagonals
   ];
-  
+
   for (let line of lines) {
     const [a, b, c] = line;
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {

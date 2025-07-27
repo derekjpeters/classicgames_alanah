@@ -6,8 +6,8 @@ A modern recreation of timeless arcade classics built with React. Experience the
 
 ### 🎯 **Modern Game Library**
 - **Snake** - Guide the snake to eat food and grow longer while avoiding walls
-- **Pong** - Classic paddle game with AI opponent and score tracking  
-- **Tic Tac Toe** - Strategic gameplay with win detection and score persistence
+- **Pong** - Classic paddle game with 4 difficulty levels, serve button, and AI opponent
+- **Tic Tac Toe** - Strategic tournament-style gameplay with custom player names and best-of-5 format
 
 ### ✨ **Contemporary Design**
 - **Glassmorphism UI** with backdrop blur effects
@@ -64,18 +64,21 @@ npm run build
 5. Click "Reset Game" to start over
 
 ### 🏓 Pong
-1. Click "Start Game" to begin
-2. Move your mouse to control the left paddle
-3. Try to score points by getting the ball past the AI
-4. First player to 5 points wins
-5. Press spacebar to pause, or use the pause button
+1. Choose your difficulty level (Easy, Medium, Hard, or Nuclear)
+2. Click "Start Game" to begin
+3. Move your mouse to control the left paddle
+4. Click "Serve Ball" to start each point
+5. Try to score points by getting the ball past the AI
+6. First player to 5 points wins
+7. Press spacebar to pause, or use the pause button
 
 ### ⭕ Tic Tac Toe
-1. Player X starts first
-2. Click on any empty square to place your mark
-3. Get three in a row (horizontally, vertically, or diagonally) to win
-4. Scores are tracked across multiple rounds
-5. Use "New Round" for a fresh game or "Reset Scores" to clear all scores
+1. Set custom player names (optional)
+2. Player X starts first
+3. Click on any empty square to place your mark
+4. Get three in a row (horizontally, vertically, or diagonally) to win
+5. First player to win 3 games wins the match
+6. Use "Next Game" for a fresh game or "Reset Match" to start over
 
 ## 🛠️ Built With
 
@@ -95,16 +98,20 @@ npm run build
 - **Game States** - Start screen, pause functionality, and game over
 
 ### 🏓 Pong
-- **AI Opponent** - Challenging computer player
+- **Four Difficulty Levels** - Easy, Medium, Hard, and Nuclear modes
+- **Serve Button** - Manual control over when each point begins
+- **AI Opponent** - Challenging computer player with difficulty-based behavior
 - **Score Tracking** - First to 5 points wins
 - **Mouse Controls** - Move your paddle with mouse movement
 - **Pause Feature** - Press spacebar to pause/resume
 - **Modern Graphics** - Gradient paddles and glowing ball effects
 
 ### ⭕ Tic Tac Toe
+- **Custom Player Names** - Personalize your gaming experience
+- **Best of 5 Tournament** - First to win 3 games wins the match
 - **Two Player Mode** - Take turns placing X's and O's
 - **Win Detection** - Automatic winner detection with animations
-- **Score Persistence** - Track wins across multiple rounds
+- **Match Tracking** - Track game wins in tournament format
 - **Visual Feedback** - Winning line highlighting and celebrations
 - **Responsive Grid** - Works perfectly on mobile devices
 

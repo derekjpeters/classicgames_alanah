@@ -199,6 +199,74 @@ canvas {
   box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4);
 }
 
+.serve-btn {
+  background: linear-gradient(135deg, #9c27b0, #ba68c8);
+  color: white;
+}
+
+.serve-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(156, 39, 176, 0.4);
+}
+
+.serving {
+  color: #9c27b0 !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.difficulty-selector {
+  margin-bottom: 1.5rem;
+}
+
+.difficulty-selector p {
+  margin-bottom: 1rem !important;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.difficulty-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: capitalize;
+}
+
+.difficulty-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.difficulty-btn.active {
+  background: linear-gradient(135deg, #00f5ff, #4ecdc4);
+  border-color: #00f5ff;
+  color: #1a1a2e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 245, 255, 0.3);
+}
+
+.difficulty-display {
+  color: #00f5ff;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
 @media (max-width: 768px) {
   .pong-container {
     padding: 1rem;
