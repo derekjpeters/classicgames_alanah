@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import TicTacToe from "./games/TicTacToe";
 import Snake from "./games/Snake";
 import Pong from "./games/Pong";
+import Tetris from "./games/Tetris";
 
 function Navigation() {
 	const location = useLocation();
@@ -38,6 +39,12 @@ function Navigation() {
 				>
 					🏓 Pong
 				</Link>
+				<Link 
+					to="/tetris" 
+					className={`nav-link ${location.pathname === '/tetris' ? 'active' : ''}`}
+				>
+					🧩 Tetris
+				</Link>
 			</div>
 		</nav>
 	);
@@ -54,6 +61,7 @@ function App() {
 						<Route path="/tictactoe" element={<TicTacToe />} />
 						<Route path="/snake" element={<Snake />} />
 						<Route path="/pong" element={<Pong />} />
+						<Route path="/tetris" element={<Tetris />} />
 					</Routes>
 				</main>
 			</div>

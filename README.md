@@ -1,6 +1,6 @@
 # 🎮 Classic Games Collection
 
-A modern recreation of timeless arcade classics built with React. Experience the nostalgia of Snake, Pong, and Tic Tac Toe with contemporary design and smooth gameplay.
+A modern recreation of timeless arcade classics built with React. Experience the nostalgia of Snake, Pong, Tic Tac Toe, and Tetris with contemporary design and smooth gameplay.
 
 ## 🌟 Features
 
@@ -8,6 +8,7 @@ A modern recreation of timeless arcade classics built with React. Experience the
 - **Snake** - Guide the snake to eat food and grow longer while avoiding walls
 - **Pong** - Classic paddle game with 4 difficulty levels, serve button, and AI opponent
 - **Tic Tac Toe** - Strategic tournament-style gameplay with custom player names and best-of-5 format
+- **Tetris** - The iconic block-stacking puzzle game with falling pieces and line clearing
 
 ### ✨ **Contemporary Design**
 - **Glassmorphism UI** with backdrop blur effects
@@ -80,6 +81,17 @@ npm run build
 5. First player to win 3 games wins the match
 6. Use "Next Game" for a fresh game or "Reset Match" to start over
 
+### 🧩 Tetris
+1. Click "Start Game" to begin
+2. Use arrow keys to control falling pieces:
+   - Left/Right arrows: Move pieces horizontally
+   - Down arrow: Soft drop (faster falling)
+   - Up arrow: Rotate pieces
+3. Stack pieces to fill complete horizontal lines
+4. Completed lines disappear and award points
+5. Game speed increases as you progress
+6. Game ends when pieces reach the top
+
 ## 🛠️ Built With
 
 - **React** - Frontend framework
@@ -114,6 +126,15 @@ npm run build
 - **Match Tracking** - Track game wins in tournament format
 - **Visual Feedback** - Winning line highlighting and celebrations
 - **Responsive Grid** - Works perfectly on mobile devices
+
+### 🧩 Tetris
+- **Classic Tetris Gameplay** - Seven different tetromino pieces (I, O, T, S, Z, J, L)
+- **Line Clearing** - Complete horizontal lines to score points
+- **Progressive Difficulty** - Game speed increases as you advance
+- **Piece Rotation** - Rotate pieces to fit them perfectly
+- **Soft Drop** - Speed up falling pieces for strategic placement
+- **Score System** - Points awarded for line clears and piece placements
+- **Modern Graphics** - Colorful pieces with smooth animations
 
 ## 📱 Mobile Support
 
@@ -156,7 +177,9 @@ src/
 │   ├── Pong.js          # Pong game logic
 │   ├── Pong.css         # Pong game styles
 │   ├── TicTacToe.js     # Tic Tac Toe logic
-│   └── TicTacToe.css    # Tic Tac Toe styles
+│   ├── TicTacToe.css    # Tic Tac Toe styles
+│   ├── Tetris.js        # Tetris game logic
+│   └── Tetris.css       # Tetris game styles
 ├── App.js               # Main app component
 ├── App.css              # Global styles and navigation
 └── index.js             # App entry point
@@ -194,7 +217,7 @@ This project is licensed under the MIT License.
 Future enhancements planned:
 - [ ] High score persistence with localStorage
 - [ ] Sound effects and background music
-- [ ] Additional games (Tetris, Pac-Man style)
+- [ ] Additional games (Pac-Man style, Breakout)
 - [ ] Multiplayer support
 - [ ] Progressive Web App features
 - [ ] Leaderboards and achievements

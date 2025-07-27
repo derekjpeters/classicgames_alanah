@@ -33,6 +33,16 @@ const Home = () => {
       players: '1 Player',
       icon: '🏓',
       color: 'from-pink-400 to-red-500'
+    },
+    {
+      id: 'tetris',
+      title: 'Tetris',
+      description: 'The iconic block-stacking puzzle game. Clear lines by filling rows!',
+      features: ['Falling blocks', 'Line clearing', 'Increasing speed'],
+      difficulty: 'Hard',
+      players: '1 Player',
+      icon: '🧩',
+      color: 'from-green-400 to-blue-500'
     }
   ];
 
