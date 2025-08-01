@@ -1,0 +1,239 @@
+/* src/games/Frogger.css */
+
+.frogger-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.frogger-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.frogger-header h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #00f5ff, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.frogger-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.frogger-stats span {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.frogger-game {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.frogger-canvas {
+  border: 2px solid #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: #000;
+}
+
+.frogger-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.frogger-start-screen,
+.frogger-game-over {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  max-width: 300px;
+}
+
+.frogger-start-screen h2,
+.frogger-game-over h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(45deg, #00f5ff, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.frogger-start-screen p,
+.frogger-game-over p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem 0;
+  opacity: 0.9;
+}
+
+.frogger-button {
+  background: linear-gradient(45deg, #00f5ff, #4ecdc4);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+}
+
+.frogger-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 245, 255, 0.4);
+  background: linear-gradient(45deg, #4ecdc4, #00f5ff);
+}
+
+.frogger-button:active {
+  transform: translateY(0);
+}
+
+.frogger-controls {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  max-width: 400px;
+  text-align: center;
+}
+
+.frogger-controls h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #00f5ff;
+}
+
+.frogger-controls ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.frogger-controls li {
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  opacity: 0.9;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.frogger-controls li::before {
+  content: "🐸";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .frogger-container {
+    padding: 1rem;
+  }
+  
+  .frogger-header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .frogger-stats {
+    gap: 1rem;
+    font-size: 1rem;
+  }
+  
+  .frogger-stats span {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .frogger-game {
+    padding: 1rem;
+  }
+  
+  .frogger-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .frogger-start-screen,
+  .frogger-game-over {
+    max-width: 280px;
+    padding: 1.5rem;
+  }
+  
+  .frogger-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .frogger-controls {
+    max-width: 100%;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .frogger-header h1 {
+    font-size: 2rem;
+  }
+  
+  .frogger-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .frogger-canvas {
+    width: 300px;
+    height: 375px;
+  }
+  
+  .frogger-start-screen h2,
+  .frogger-game-over h2 {
+    font-size: 1.5rem;
+  }
+}

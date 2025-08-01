@@ -1,0 +1,336 @@
+/* src/games/Galaga.css */
+
+.galaga-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a0033 50%, #000000 100%);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated star background */
+.galaga-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, white, transparent),
+    radial-gradient(1px 1px at 40px 70px, white, transparent),
+    radial-gradient(1px 1px at 90px 40px, white, transparent),
+    radial-gradient(1px 1px at 130px 80px, white, transparent),
+    radial-gradient(1px 1px at 160px 30px, white, transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: twinkle 3s ease-in-out infinite alternate;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.4; }
+}
+
+.galaga-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+  z-index: 1;
+}
+
+.galaga-header h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  text-shadow: 
+    0 0 10px #00f5ff,
+    0 0 20px #00f5ff,
+    0 0 30px #00f5ff,
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  background: linear-gradient(45deg, #00f5ff, #ff6b6b, #ffff00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  0% { 
+    filter: drop-shadow(0 0 5px #00f5ff);
+  }
+  100% { 
+    filter: drop-shadow(0 0 15px #00f5ff);
+  }
+}
+
+.galaga-stats {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.galaga-stats span {
+  background: rgba(0, 245, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  box-shadow: 
+    0 0 10px rgba(0, 245, 255, 0.2),
+    inset 0 0 10px rgba(0, 245, 255, 0.1);
+  color: #00f5ff;
+  text-shadow: 0 0 5px rgba(0, 245, 255, 0.5);
+}
+
+.galaga-game {
+  position: relative;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 2px solid rgba(0, 245, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 245, 255, 0.2),
+    inset 0 0 20px rgba(0, 245, 255, 0.1);
+  margin-bottom: 2rem;
+  z-index: 1;
+}
+
+.galaga-canvas {
+  border: 2px solid #00f5ff;
+  border-radius: 10px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 15px rgba(0, 245, 255, 0.3),
+    inset 0 0 10px rgba(0, 245, 255, 0.1);
+  background: #000;
+}
+
+.galaga-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.galaga-start-screen,
+.galaga-game-over {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  background: rgba(0, 245, 255, 0.1);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  backdrop-filter: blur(15px);
+  max-width: 320px;
+  box-shadow: 
+    0 0 20px rgba(0, 245, 255, 0.2),
+    inset 0 0 20px rgba(0, 245, 255, 0.1);
+}
+
+.galaga-start-screen h2,
+.galaga-game-over h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(45deg, #00f5ff, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+.galaga-start-screen p,
+.galaga-game-over p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+  opacity: 0.9;
+  color: #00f5ff;
+}
+
+.galaga-button {
+  background: linear-gradient(45deg, #00f5ff, #0080ff);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 
+    0 4px 15px rgba(0, 245, 255, 0.4),
+    0 0 20px rgba(0, 245, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.galaga-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.galaga-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(0, 245, 255, 0.5),
+    0 0 30px rgba(0, 245, 255, 0.3);
+  background: linear-gradient(45deg, #0080ff, #00f5ff);
+}
+
+.galaga-button:hover::before {
+  left: 100%;
+}
+
+.galaga-button:active {
+  transform: translateY(0);
+}
+
+.galaga-controls {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  color: white;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 
+    0 0 15px rgba(0, 245, 255, 0.2),
+    inset 0 0 15px rgba(0, 245, 255, 0.1);
+  z-index: 1;
+}
+
+.galaga-controls h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #00f5ff;
+  text-shadow: 0 0 5px rgba(0, 245, 255, 0.5);
+}
+
+.galaga-controls ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.galaga-controls li {
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  opacity: 0.9;
+  position: relative;
+  padding-left: 1.5rem;
+  color: #e0e0e0;
+}
+
+.galaga-controls li::before {
+  content: "🚀";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .galaga-container {
+    padding: 1rem;
+  }
+  
+  .galaga-header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .galaga-stats {
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .galaga-stats span {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .galaga-game {
+    padding: 1rem;
+  }
+  
+  .galaga-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .galaga-start-screen,
+  .galaga-game-over {
+    max-width: 280px;
+    padding: 1.5rem;
+  }
+  
+  .galaga-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .galaga-controls {
+    max-width: 100%;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .galaga-header h1 {
+    font-size: 2rem;
+  }
+  
+  .galaga-stats {
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+  }
+  
+  .galaga-stats span {
+    font-size: 0.8rem;
+  }
+  
+  .galaga-canvas {
+    width: 300px;
+    height: 375px;
+  }
+  
+  .galaga-start-screen h2,
+  .galaga-game-over h2 {
+    font-size: 1.5rem;
+  }
+  
+  .galaga-controls li {
+    font-size: 0.8rem;
+  }
+}

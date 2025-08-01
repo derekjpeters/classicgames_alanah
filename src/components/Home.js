@@ -1,6 +1,128 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+  Box,
+  Chip,
+  Avatar,
+  Paper,
+  IconButton
+} from '@mui/material';
+import {
+  PlayArrow,
+  SportsEsports,
+  AutoAwesome,
+  PhoneAndroid,
+  Speed
+} from '@mui/icons-material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './Home.css';
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#6366f1', // Modern indigo
+      light: '#818cf8',
+      dark: '#4f46e5',
+    },
+    secondary: {
+      main: '#f59e0b', // Warm amber
+      light: '#fbbf24',
+      dark: '#d97706',
+    },
+    background: {
+      default: '#0f172a', // Dark slate
+      paper: '#1e293b', // Slate 800
+    },
+    text: {
+      primary: '#f8fafc', // Nearly white
+      secondary: '#cbd5e1', // Slate 300
+    },
+    success: {
+      main: '#10b981', // Emerald
+    },
+    error: {
+      main: '#ef4444', // Red
+    },
+    warning: {
+      main: '#f59e0b', // Amber
+    },
+  },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1e293b',
+          border: '1px solid #334155',
+          borderRadius: '16px',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
+            borderColor: '#6366f1',
+          },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '12px',
+          textTransform: 'none',
+          fontWeight: 600,
+          padding: '12px 24px',
+        },
+        contained: {
+          boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.25)',
+          '&:hover': {
+            boxShadow: '0 6px 20px 0 rgba(99, 102, 241, 0.35)',
+          },
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px',
+          fontWeight: 500,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1e293b',
+          border: '1px solid #334155',
+        },
+      },
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h2: {
+      fontWeight: 800,
+      letterSpacing: '-0.025em',
+    },
+    h4: {
+      fontWeight: 700,
+      letterSpacing: '-0.025em',
+    },
+    h5: {
+      fontWeight: 600,
+      letterSpacing: '-0.025em',
+    },
+    h6: {
+      fontWeight: 600,
+    },
+  },
+});
 
 const Home = () => {
   const games = [
@@ -43,93 +165,303 @@ const Home = () => {
       players: '1 Player',
       icon: '🧩',
       color: 'from-green-400 to-blue-500'
+    },
+    {
+      id: 'frogger',
+      title: 'Frogger',
+      description: 'Cross roads and rivers while avoiding obstacles. Reach the top to win!',
+      features: ['Road crossing', 'River obstacles', 'Level progression'],
+      difficulty: 'Medium',
+      players: '1 Player',
+      icon: '🐸',
+      color: 'from-emerald-400 to-green-600'
+    },
+    {
+      id: 'galaga',
+      title: 'Galaga',
+      description: 'Enhanced space shooter with formation flying enemies. Defend Earth!',
+      features: ['Formation flying', 'Enemy patterns', 'Wave progression'],
+      difficulty: 'Hard',
+      players: '1 Player',
+      icon: '🚀',
+      color: 'from-indigo-400 to-blue-700'
     }
   ];
 
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty.toLowerCase()) {
+      case 'easy': return 'success';
+      case 'medium': return 'warning';
+      case 'hard': return 'error';
+      default: return 'primary';
+    }
+  };
+
   return (
-    <div className="home-container">
-      <header className="home-header">
-        <h1 className="home-title">Classic Games Collection</h1>
-        <p className="home-subtitle">
-          Relive the golden age of gaming with these timeless classics, 
-          reimagined with modern design and smooth gameplay.
-        </p>
-      </header>
+    <ThemeProvider theme={theme}>
+      <Box 
+        sx={{ 
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          py: 4
+        }}
+      >
+        <Container maxWidth="xl">
+          {/* Header Section */}
+          <Box textAlign="center" mb={8}>
+            <Typography 
+              variant="h2" 
+              component="h1" 
+              sx={{ 
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #f59e0b)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 3,
+                fontSize: { xs: '2.5rem', md: '3.5rem' }
+              }}
+            >
+              Classic Games Collection
+            </Typography>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              sx={{ 
+                maxWidth: 700, 
+                mx: 'auto', 
+                mb: 4,
+                lineHeight: 1.6,
+                fontSize: { xs: '1.1rem', md: '1.25rem' }
+              }}
+            >
+              Relive the golden age of gaming with these timeless classics, 
+              reimagined with modern design and smooth gameplay.
+            </Typography>
+          </Box>
 
-      <section className="games-showcase">
-        <h2 className="section-title">Choose Your Game</h2>
-        <div className="games-grid">
-          {games.map((game) => (
-            <Link to={`/${game.id}`} key={game.id} className="game-card-link">
-              <div className={`game-card ${game.id}-card`}>
-                <div className="game-icon">
-                  <span className="icon-emoji">{game.icon}</span>
-                </div>
-                
-                <div className="game-info">
-                  <h3 className="game-title">{game.title}</h3>
-                  <p className="game-description">{game.description}</p>
-                  
-                  <div className="game-meta">
-                    <span className="meta-item">
-                      <span className="meta-label">Difficulty:</span>
-                      <span className={`difficulty ${game.difficulty.toLowerCase()}`}>
-                        {game.difficulty}
-                      </span>
-                    </span>
-                    <span className="meta-item">
-                      <span className="meta-label">Players:</span>
-                      <span className="players">{game.players}</span>
-                    </span>
-                  </div>
-                  
-                  <div className="game-features">
-                    {game.features.map((feature, index) => (
-                      <span key={index} className="feature-tag">
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="play-button">
-                  <span>Play Now</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
-                  </svg>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+          {/* Games Grid */}
+          <Box mb={10}>
+            <Typography 
+              variant="h4" 
+              textAlign="center" 
+              mb={6} 
+              color="text.primary"
+              sx={{ fontWeight: 700 }}
+            >
+              Choose Your Game
+            </Typography>
+            <Grid container spacing={4} justifyContent="center">
+              {games.map((game) => (
+                <Grid item xs={12} sm={6} md={4} key={game.id} sx={{ display: 'flex' }}>
+                  <Card 
+                    component={Link} 
+                    to={`/${game.id}`}
+                    sx={{ 
+                      width: '100%',
+                      maxWidth: 350,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      mx: 'auto'
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                      {/* Header with Icon and Title */}
+                      <Box display="flex" alignItems="center" mb={3}>
+                        <Box
+                          sx={{
+                            width: 56,
+                            height: 56,
+                            borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.8rem',
+                            mr: 2,
+                            boxShadow: '0 6px 12px rgba(99, 102, 241, 0.2)'
+                          }}
+                        >
+                          {game.icon}
+                        </Box>
+                        <Typography 
+                          variant="h6" 
+                          fontWeight="bold" 
+                          color="text.primary"
+                          sx={{ fontSize: '1.25rem' }}
+                        >
+                          {game.title}
+                        </Typography>
+                      </Box>
+                      
+                      {/* Description */}
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary" 
+                        mb={3}
+                        sx={{ 
+                          lineHeight: 1.6,
+                          minHeight: '48px',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        {game.description}
+                      </Typography>
+                      
+                      {/* Metadata Chips */}
+                      <Box display="flex" gap={1} mb={3} justifyContent="flex-start">
+                        <Chip 
+                          label={game.difficulty}
+                          color={getDifficultyColor(game.difficulty)}
+                          size="small"
+                          sx={{ fontWeight: 600 }}
+                        />
+                        <Chip 
+                          label={game.players}
+                          variant="outlined"
+                          size="small"
+                          sx={{ fontWeight: 500 }}
+                        />
+                      </Box>
+                      
+                      {/* Feature Tags */}
+                      <Box 
+                        display="flex" 
+                        gap={0.5} 
+                        flexWrap="wrap"
+                        sx={{ minHeight: '60px' }}
+                      >
+                        {game.features.map((feature, index) => (
+                          <Chip 
+                            key={index}
+                            label={feature}
+                            variant="outlined"
+                            size="small"
+                            sx={{ 
+                              fontSize: '0.7rem',
+                              fontWeight: 500,
+                              opacity: 0.8,
+                              height: '24px'
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </CardContent>
+                    
+                    {/* Action Button */}
+                    <CardActions sx={{ p: 3, pt: 0 }}>
+                      <Button 
+                        variant="contained" 
+                        fullWidth
+                        startIcon={<PlayArrow />}
+                        sx={{ 
+                          py: 1.5,
+                          fontSize: '1rem',
+                          fontWeight: 600
+                        }}
+                      >
+                        Play Now
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
 
-      <section className="features-section">
-        <h2 className="section-title">Why Play Our Games?</h2>
-        <div className="features-grid">
-          <div className="feature-item">
-            <div className="feature-icon">🎮</div>
-            <h3>Classic Gameplay</h3>
-            <p>Authentic game mechanics that stay true to the originals</p>
-          </div>
-          <div className="feature-item">
-            <div className="feature-icon">✨</div>
-            <h3>Modern Design</h3>
-            <p>Beautiful graphics and smooth animations for the best experience</p>
-          </div>
-          <div className="feature-item">
-            <div className="feature-icon">📱</div>
-            <h3>Responsive</h3>
-            <p>Play on any device - desktop, tablet, or mobile</p>
-          </div>
-          <div className="feature-item">
-            <div className="feature-icon">🚀</div>
-            <h3>Fast Loading</h3>
-            <p>Optimized for quick loading and smooth performance</p>
-          </div>
-        </div>
-      </section>
-    </div>
+          {/* Features Section */}
+          <Box>
+            <Typography 
+              variant="h4" 
+              textAlign="center" 
+              mb={6} 
+              color="text.primary"
+              sx={{ fontWeight: 700 }}
+            >
+              Why Play Our Games?
+            </Typography>
+            <Grid container spacing={4}>
+              {[
+                {
+                  icon: <SportsEsports sx={{ fontSize: 40 }} />,
+                  title: 'Classic Gameplay',
+                  description: 'Authentic game mechanics that stay true to the originals'
+                },
+                {
+                  icon: <AutoAwesome sx={{ fontSize: 40 }} />,
+                  title: 'Modern Design',
+                  description: 'Beautiful graphics and smooth animations for the best experience'
+                },
+                {
+                  icon: <PhoneAndroid sx={{ fontSize: 40 }} />,
+                  title: 'Responsive',
+                  description: 'Play on any device - desktop, tablet, or mobile'
+                },
+                {
+                  icon: <Speed sx={{ fontSize: 40 }} />,
+                  title: 'Fast Loading',
+                  description: 'Optimized for quick loading and smooth performance'
+                }
+              ].map((feature, index) => (
+                <Grid item xs={12} sm={6} md={3} key={index}>
+                  <Paper 
+                    elevation={2}
+                    sx={{ 
+                      p: 4, 
+                      textAlign: 'center', 
+                      height: '100%',
+                      borderRadius: '16px',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.15)'
+                      }
+                    }}
+                  >
+                    <Box 
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '20px',
+                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mx: 'auto',
+                        mb: 3,
+                        color: 'white'
+                      }}
+                    >
+                      {feature.icon}
+                    </Box>
+                    <Typography 
+                      variant="h6" 
+                      mb={2} 
+                      fontWeight="bold"
+                      color="text.primary"
+                    >
+                      {feature.title}
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary"
+                      sx={{ lineHeight: 1.6 }}
+                    >
+                      {feature.description}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };
 
