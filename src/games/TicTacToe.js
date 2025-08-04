@@ -11,7 +11,6 @@ import {
   Card,
   CardContent,
   TextField,
-  Grid,
   useMediaQuery,
   useTheme
 } from '@mui/material';
@@ -269,48 +268,67 @@ const TicTacToe = () => {
                 p: 2,
                 borderRadius: 3,
                 background: 'rgba(0, 0, 0, 0.8)',
+                display: 'inline-block'
               }}
             >
-              <Grid container spacing={1} sx={{ width: isMobile ? 300 : 360 }}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 1,
+                  width: isMobile ? 300 : 360,
+                  height: isMobile ? 300 : 360,
+                }}
+              >
                 {board.map((square, i) => (
-                  <Grid item xs={4} key={i}>
-                    <Paper
-                      component="button"
-                      onClick={() => handleClick(i)}
-                      disabled={gameState !== 'playing' || matchWinner || square}
-                      sx={{
-                        width: '100%',
-                        height: isMobile ? 90 : 110,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: { xs: '2rem', md: '3rem' },
-                        fontWeight: 'bold',
-                        cursor: (gameState === 'playing' && !matchWinner && !square) ? 'pointer' : 'default',
+                  <Button
+                    key={i}
+                    onClick={() => handleClick(i)}
+                    disabled={gameState !== 'playing' || matchWinner || square}
+                    variant="outlined"
+                    sx={{
+                      minWidth: 'unset',
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: { xs: '2.5rem', md: '3.5rem' },
+                      fontWeight: 'bold',
+                      backgroundColor: winningLine && winningLine.includes(i) 
+                        ? 'rgba(156, 39, 176, 0.4)' 
+                        : 'rgba(255, 255, 255, 0.08)',
+                      border: '2px solid rgba(156, 39, 176, 0.5)',
+                      borderRadius: 2,
+                      color: square === 'X' 
+                        ? '#9c27b0' 
+                        : square === 'O' 
+                        ? '#f44336' 
+                        : 'transparent',
+                      '&:hover': {
+                        backgroundColor: (gameState === 'playing' && !matchWinner && !square) 
+                          ? 'rgba(156, 39, 176, 0.15)' 
+                          : undefined,
+                        border: '2px solid rgba(156, 39, 176, 0.7)'
+                      },
+                      '&:disabled': {
                         backgroundColor: winningLine && winningLine.includes(i) 
-                          ? 'rgba(156, 39, 176, 0.3)' 
-                          : 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(156, 39, 176, 0.3)',
-                        borderRadius: 2,
-                        color: square === 'X' ? 'primary.main' : square === 'O' ? 'secondary.main' : 'transparent',
-                        '&:hover': {
-                          backgroundColor: (gameState === 'playing' && !matchWinner && !square) 
-                            ? 'rgba(156, 39, 176, 0.1)' 
-                            : undefined
-                        },
-                        '&:disabled': {
-                          backgroundColor: winningLine && winningLine.includes(i) 
-                            ? 'rgba(156, 39, 176, 0.3)' 
-                            : 'rgba(255, 255, 255, 0.05)',
-                        },
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      {square}
-                    </Paper>
-                  </Grid>
+                          ? 'rgba(156, 39, 176, 0.4)' 
+                          : 'rgba(255, 255, 255, 0.08)',
+                        color: square === 'X' 
+                          ? '#9c27b0' 
+                          : square === 'O' 
+                          ? '#f44336' 
+                          : 'transparent',
+                        border: '2px solid rgba(156, 39, 176, 0.5)'
+                      },
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {square}
+                  </Button>
                 ))}
-              </Grid>
+              </Box>
             </Paper>
           </Box>
 
