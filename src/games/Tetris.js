@@ -1,4 +1,31 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Chip,
+  Stack,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Grid,
+  useMediaQuery,
+  useTheme
+} from '@mui/material';
+import { 
+  PlayArrow, 
+  RestartAlt,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+  KeyboardArrowLeft
+} from '@mui/icons-material';
+import { ThemeProvider } from '@mui/material/styles';
+import { gameThemes } from '../theme/gameTheme';
 import './Tetris.css';
 
 const BOARD_WIDTH = 10;
@@ -309,87 +336,262 @@ const Tetris = () => {
     }
   }, [board, currentPiece, currentPosition, gameState]);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
-    <div className="tetris-container">
-      <div className="tetris-header">
-        <h2>Tetris</h2>
-        <div className="game-stats">
-          <div className="stat">Score: {score}</div>
-          <div className="stat">Level: {level}</div>
-          <div className="stat">Lines: {linesCleared}</div>
-        </div>
-      </div>
-      
-      <div className="tetris-game">
-        <canvas 
-          ref={canvasRef} 
-          width={BOARD_WIDTH * CELL_SIZE} 
-          height={BOARD_HEIGHT * CELL_SIZE}
-          className="tetris-board"
-        />
-        
-        <div className="tetris-side">
-          <div className="next-piece">
-            <h3>Next</h3>
-            <div className="next-piece-display">
-              {nextPiece && (
-                <div className="piece-preview">
-                  {nextPiece.shape.map((row, y) => (
-                    <div key={y} className="piece-row">
-                      {row.map((cell, x) => (
-                        <div 
-                          key={x} 
-                          className="piece-cell"
-                          style={{
-                            backgroundColor: cell ? nextPiece.color : 'transparent',
-                            border: cell ? '1px solid #000' : 'none'
-                          }}
-                        />
-                      ))}
-                    </div>
-                  ))}
-                </div>
+    <ThemeProvider theme={gameThemes.tetris}>
+      <Box 
+        sx={{ 
+          minHeight: '100vh', 
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          py: { xs: 2, md: 4 }
+        }}
+      >
+        <Container maxWidth={isMobile ? "sm" : "lg"}>
+          {/* Header */}
+          <Box textAlign="center" mb={{ xs: 2, md: 4 }}>
+            <Typography 
+              variant="h3" 
+              component="h1" 
+              sx={{ 
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #ff5722, #ff8a65, #ffab91)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 2,
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+              }}
+            >
+              🧩 Tetris
+            </Typography>
+            
+            <Stack 
+              direction={{ xs: 'column', sm: 'row' }} 
+              spacing={{ xs: 1, sm: 2 }} 
+              justifyContent="center"
+              flexWrap="wrap"
+              gap={1}
+            >
+              <Chip 
+                label={`Score: ${score}`} 
+                color="primary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+              <Chip 
+                label={`Level: ${level}`} 
+                color="secondary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+              <Chip 
+                label={`Lines: ${linesCleared}`} 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+            </Stack>
+          </Box>
+
+          {/* Game Area */}
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={12} md={6}>
+              <Paper 
+                elevation={3}
+                sx={{ 
+                  position: 'relative',
+                  p: { xs: 1, md: 2 },
+                  borderRadius: 3,
+                  background: 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                <canvas 
+                  ref={canvasRef} 
+                  width={BOARD_WIDTH * CELL_SIZE} 
+                  height={BOARD_HEIGHT * CELL_SIZE}
+                  style={{
+                    border: '2px solid #ff5722',
+                    borderRadius: '12px',
+                    width: '100%',
+                    maxWidth: isMobile ? '300px' : `${BOARD_WIDTH * CELL_SIZE}px`,
+                    height: 'auto',
+                    boxShadow: '0 8px 32px rgba(255, 87, 34, 0.15)'
+                  }}
+                />
+              
+              {gameState === 'start' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
+                >
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="primary">
+                        Ready to Stack?
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        Stack the falling pieces to clear lines!
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<PlayArrow />}
+                        onClick={startGame}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #ff5722, #ff8a65)',
+                          mt: 2
+                        }}
+                      >
+                        Start Game
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
               )}
-            </div>
-          </div>
-          
-          <div className="controls-info">
-            <h3>Controls</h3>
-            <div className="control-item">← → Move</div>
-            <div className="control-item">↓ Soft Drop</div>
-            <div className="control-item">↑ or Space Rotate</div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="game-controls">
-        {gameState === 'start' && (
-          <div className="game-message">
-            <p>Stack the falling pieces to clear lines!</p>
-            <button onClick={startGame} className="game-btn start-btn">
-              Start Game
-            </button>
-          </div>
-        )}
-        
-        {gameState === 'gameOver' && (
-          <div className="game-message">
-            <p className="game-over">Game Over!</p>
-            <p>Final Score: {score}</p>
-            <p>Lines Cleared: {linesCleared}</p>
-            <button onClick={resetGame} className="game-btn reset-btn">
-              Play Again
-            </button>
-          </div>
-        )}
-        
-        {gameState === 'playing' && (
-          <button onClick={resetGame} className="game-btn reset-btn">
-            Reset Game
-          </button>
-        )}
-      </div>
-    </div>
+
+              {gameState === 'gameOver' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
+                >
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="error">
+                        Game Over!
+                      </Typography>
+                      <Typography variant="body1" color="primary" gutterBottom>
+                        Final Score: {score}
+                      </Typography>
+                      <Typography variant="body2" color="secondary" sx={{ mb: 2 }}>
+                        Lines Cleared: {linesCleared}
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<RestartAlt />}
+                        onClick={resetGame}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #f44336, #e57373)',
+                          mt: 2
+                        }}
+                      >
+                        Play Again
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+              </Paper>
+            </Grid>
+            
+            {/* Side Panel */}
+            <Grid item xs={12} md={4}>
+              <Stack spacing={2}>
+                {/* Next Piece */}
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="primary" textAlign="center">
+                      Next Piece
+                    </Typography>
+                    <Box 
+                      display="flex" 
+                      justifyContent="center" 
+                      alignItems="center" 
+                      minHeight={80}
+                      sx={{ 
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        borderRadius: 2,
+                        border: '1px solid rgba(255, 87, 34, 0.3)'
+                      }}
+                    >
+                      {nextPiece && (
+                        <Box>
+                          {nextPiece.shape.map((row, y) => (
+                            <Box key={y} display="flex">
+                              {row.map((cell, x) => (
+                                <Box 
+                                  key={x}
+                                  sx={{
+                                    width: 16,
+                                    height: 16,
+                                    backgroundColor: cell ? nextPiece.color : 'transparent',
+                                    border: cell ? '1px solid rgba(0, 0, 0, 0.3)' : 'none',
+                                    borderRadius: 0.5
+                                  }}
+                                />
+                              ))}
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+                
+                {/* Controls */}
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color="primary" textAlign="center">
+                      Controls
+                    </Typography>
+                    <List dense>
+                      <ListItem>
+                        <ListItemIcon>
+                          <KeyboardArrowLeft color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary="← → Move piece" />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemIcon>
+                          <KeyboardArrowDown color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary="↓ Soft drop" />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemIcon>
+                          <KeyboardArrowUp color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary="↑ or Space to rotate" />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+                
+                {/* Reset Button for Playing State */}
+                {gameState === 'playing' && (
+                  <Button 
+                    variant="outlined"
+                    startIcon={<RestartAlt />}
+                    onClick={resetGame}
+                    fullWidth
+                  >
+                    Reset Game
+                  </Button>
+                )}
+              </Stack>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,30 @@
 // src/games/Snake.js
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Chip,
+  Stack,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Grid,
+  useMediaQuery,
+  useTheme
+} from '@mui/material';
+import { 
+  PlayArrow, 
+  RestartAlt,
+  KeyboardArrowUp
+} from '@mui/icons-material';
+import { ThemeProvider } from '@mui/material/styles';
+import { gameThemes } from '../theme/gameTheme';
 import './Snake.css';
 
 const Snake = () => {
@@ -246,42 +271,188 @@ const Snake = () => {
     });
   }, [snake, food, direction]);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
-    <div className="snake-container">
-      <div className="snake-header">
-        <h2>Snake Game</h2>
-        <div className="score">Score: {score}</div>
-      </div>
-      
-      <canvas ref={canvasRef} width={canvasSize} height={canvasSize} />
-      
-      <div className="game-controls">
-        {gameState === 'start' && (
-          <div className="game-message">
-            <p>Use arrow keys to control the snake</p>
-            <button onClick={startGame} className="game-btn start-btn">
-              Start Game
-            </button>
-          </div>
-        )}
-        
-        {gameState === 'gameOver' && (
-          <div className="game-message">
-            <p className="game-over">Game Over!</p>
-            <p>Final Score: {score}</p>
-            <button onClick={resetGame} className="game-btn reset-btn">
-              Play Again
-            </button>
-          </div>
-        )}
-        
-        {gameState === 'playing' && (
-          <button onClick={resetGame} className="game-btn reset-btn">
-            Reset Game
-          </button>
-        )}
-      </div>
-    </div>
+    <ThemeProvider theme={gameThemes.snake}>
+      <Box 
+        sx={{ 
+          minHeight: '100vh', 
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          py: { xs: 2, md: 4 }
+        }}
+      >
+        <Container maxWidth={isMobile ? "sm" : "lg"}>
+          {/* Header */}
+          <Box textAlign="center" mb={{ xs: 2, md: 4 }}>
+            <Typography 
+              variant="h3" 
+              component="h1" 
+              sx={{ 
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #4caf50, #81c784, #a5d6a7)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 2,
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+              }}
+            >
+              🐍 Snake Game
+            </Typography>
+            
+            <Stack 
+              direction={{ xs: 'row', sm: 'row' }} 
+              spacing={{ xs: 1, sm: 2 }} 
+              justifyContent="center"
+              flexWrap="wrap"
+              gap={1}
+            >
+              <Chip 
+                label={`Score: ${score}`} 
+                color="primary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+            </Stack>
+          </Box>
+
+          {/* Game Area */}
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={12} md={8}>
+              <Paper 
+                elevation={3}
+                sx={{ 
+                  position: 'relative',
+                  p: { xs: 1, md: 2 },
+                  borderRadius: 3,
+                  background: 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                <canvas 
+                  ref={canvasRef} 
+                  width={canvasSize} 
+                  height={canvasSize}
+                  style={{
+                    border: '2px solid #4caf50',
+                    borderRadius: '12px',
+                    width: '100%',
+                    maxWidth: isMobile ? '350px' : '400px',
+                    height: 'auto',
+                    boxShadow: '0 8px 32px rgba(76, 175, 80, 0.15)'
+                  }}
+                />
+              
+              {gameState === 'start' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
+                >
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="primary">
+                        Ready to Slither?
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" paragraph>
+                        Use arrow keys to guide the snake and collect food!
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<PlayArrow />}
+                        onClick={startGame}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #4caf50, #81c784)',
+                          mt: 2
+                        }}
+                      >
+                        Start Game
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+
+              {gameState === 'gameOver' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
+                >
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="error">
+                        Game Over!
+                      </Typography>
+                      <Typography variant="body1" color="primary" gutterBottom>
+                        Final Score: {score}
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<RestartAlt />}
+                        onClick={resetGame}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #f44336, #e57373)',
+                          mt: 2
+                        }}
+                      >
+                        Play Again
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+              </Paper>
+            </Grid>
+          </Grid>
+
+          {/* Controls */}
+          <Card sx={{ maxWidth: 600, mx: 'auto', mt: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom color="primary" textAlign="center">
+                How to Play
+              </Typography>
+              <List dense>
+                <ListItem>
+                  <ListItemIcon>
+                    <KeyboardArrowUp color="primary" />
+                  </ListItemIcon>
+                  <ListItemText primary="Use arrow keys to control the snake" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>🍎</ListItemIcon>
+                  <ListItemText primary="Eat the red apples to grow longer" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>🚫</ListItemIcon>
+                  <ListItemText primary="Don't hit the walls or your own tail" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>🎯</ListItemIcon>
+                  <ListItemText primary="Try to get the highest score possible!" />
+                </ListItem>
+              </List>
+            </CardContent>
+          </Card>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };
 

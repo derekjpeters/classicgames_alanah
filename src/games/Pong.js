@@ -1,5 +1,33 @@
 // src/games/Pong.js
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Chip,
+  Stack,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Grid,
+  ToggleButton,
+  ToggleButtonGroup,
+  useMediaQuery,
+  useTheme
+} from '@mui/material';
+import { 
+  PlayArrow, 
+  RestartAlt,
+  Pause,
+  SportsEsports
+} from '@mui/icons-material';
+import { ThemeProvider } from '@mui/material/styles';
+import { gameThemes } from '../theme/gameTheme';
 import './Pong.css';
 
 const Pong = () => {
@@ -267,110 +295,309 @@ const Pong = () => {
     };
   }, [gameState, pauseGame, resetBall, winningScore]);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
-    <div className="pong-container">
-      <div className="pong-header">
-        <h2>Pong</h2>
-        <div className="score-board">
-          <div className="score-item player">
-            <span className="score-label">You</span>
-            <span className="score-value">{playerScore}</span>
-          </div>
-          <div className="score-divider">-</div>
-          <div className="score-item ai">
-            <span className="score-label">AI</span>
-            <span className="score-value">{aiScore}</span>
-          </div>
-        </div>
-      </div>
+    <ThemeProvider theme={gameThemes.pong}>
+      <Box 
+        sx={{ 
+          minHeight: '100vh', 
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          py: { xs: 2, md: 4 }
+        }}
+      >
+        <Container maxWidth={isMobile ? "sm" : "lg"}>
+          {/* Header */}
+          <Box textAlign="center" mb={{ xs: 2, md: 4 }}>
+            <Typography 
+              variant="h3" 
+              component="h1" 
+              sx={{ 
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #2196f3, #64b5f6, #90caf9)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 2,
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+              }}
+            >
+              🏓 Pong
+            </Typography>
+            
+            <Stack 
+              direction={{ xs: 'row', sm: 'row' }} 
+              spacing={{ xs: 1, sm: 2 }} 
+              justifyContent="center"
+              flexWrap="wrap"
+              gap={1}
+            >
+              <Chip 
+                label={`You: ${playerScore}`} 
+                color="primary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+              <Chip 
+                label={`AI: ${aiScore}`} 
+                color="secondary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+            </Stack>
+          </Box>
 
-      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-
-      <div className="game-controls">
-        {gameState === 'start' && (
-          <div className="game-message">
-            <div className="difficulty-selector">
-              <p>Choose Difficulty:</p>
-              <div className="difficulty-buttons">
-                <button 
-                  onClick={() => setDifficulty('easy')} 
-                  className={`difficulty-btn ${difficulty === 'easy' ? 'active' : ''}`}
+          {/* Game Area */}
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={12} md={8}>
+              <Paper 
+                elevation={3}
+                sx={{ 
+                  position: 'relative',
+                  p: { xs: 1, md: 2 },
+                  borderRadius: 3,
+                  background: 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                <canvas 
+                  ref={canvasRef} 
+                  width={canvasWidth} 
+                  height={canvasHeight}
+                  style={{
+                    border: '2px solid #2196f3',
+                    borderRadius: '12px',
+                    width: '100%',
+                    maxWidth: isMobile ? '350px' : '600px',
+                    height: 'auto',
+                    boxShadow: '0 8px 32px rgba(33, 150, 243, 0.15)'
+                  }}
+                />
+              
+              {gameState === 'start' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
                 >
-                  Easy
-                </button>
-                <button 
-                  onClick={() => setDifficulty('medium')} 
-                  className={`difficulty-btn ${difficulty === 'medium' ? 'active' : ''}`}
+                  <Card sx={{ maxWidth: 350, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="primary">
+                        Choose Difficulty
+                      </Typography>
+                      <ToggleButtonGroup
+                        value={difficulty}
+                        exclusive
+                        onChange={(e, newDifficulty) => newDifficulty && setDifficulty(newDifficulty)}
+                        sx={{ mb: 2 }}
+                        size="small"
+                      >
+                        <ToggleButton value="easy">Easy</ToggleButton>
+                        <ToggleButton value="medium">Medium</ToggleButton>
+                        <ToggleButton value="hard">Hard</ToggleButton>
+                        <ToggleButton value="nuclear">Nuclear</ToggleButton>
+                      </ToggleButtonGroup>
+                      <Typography variant="body2" color="text.secondary" paragraph>
+                        Move your mouse to control the left paddle. First to {winningScore} wins!
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<PlayArrow />}
+                        onClick={startGame}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #2196f3, #64b5f6)',
+                          mt: 2
+                        }}
+                      >
+                        Start Game
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+
+              {gameState === 'serving' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
                 >
-                  Medium
-                </button>
-                <button 
-                  onClick={() => setDifficulty('hard')} 
-                  className={`difficulty-btn ${difficulty === 'hard' ? 'active' : ''}`}
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="primary">
+                        Ready to Serve
+                      </Typography>
+                      <Typography variant="body2" color="secondary" paragraph>
+                        Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<SportsEsports />}
+                        onClick={serveBall}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #4caf50, #81c784)',
+                          mt: 2
+                        }}
+                      >
+                        Serve Ball
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+
+              {gameState === 'paused' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
                 >
-                  Hard
-                </button>
-                <button 
-                  onClick={() => setDifficulty('nuclear')} 
-                  className={`difficulty-btn ${difficulty === 'nuclear' ? 'active' : ''}`}
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color="warning">
+                        Game Paused
+                      </Typography>
+                      <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
+                        <Button 
+                          variant="contained" 
+                          startIcon={<PlayArrow />}
+                          onClick={pauseGame}
+                          sx={{ 
+                            background: 'linear-gradient(45deg, #4caf50, #81c784)'
+                          }}
+                        >
+                          Resume
+                        </Button>
+                        <Button 
+                          variant="outlined" 
+                          startIcon={<RestartAlt />}
+                          onClick={resetGame}
+                        >
+                          New Game
+                        </Button>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+
+              {gameState === 'gameOver' && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgcolor="rgba(0, 0, 0, 0.8)"
+                  borderRadius={3}
                 >
-                  Nuclear
-                </button>
-              </div>
-            </div>
-            <p>Move your mouse to control the left paddle</p>
-            <p>First to {winningScore} points wins!</p>
-            <button onClick={startGame} className="game-btn start-btn">
-              Start Game
-            </button>
-          </div>
-        )}
+                  <Card sx={{ maxWidth: 300, textAlign: 'center' }}>
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom color={playerScore >= winningScore ? "primary" : "error"}>
+                        {playerScore >= winningScore ? 'You Win!' : 'AI Wins!'}
+                      </Typography>
+                      <Typography variant="body1" color="text.primary" gutterBottom>
+                        Final Score: {playerScore} - {aiScore}
+                      </Typography>
+                      <Button 
+                        variant="contained" 
+                        startIcon={<RestartAlt />}
+                        onClick={resetGame}
+                        sx={{ 
+                          background: 'linear-gradient(45deg, #f44336, #e57373)',
+                          mt: 2
+                        }}
+                      >
+                        Play Again
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
 
-        {gameState === 'paused' && (
-          <div className="game-message">
-            <p className="paused">Game Paused</p>
-            <button onClick={pauseGame} className="game-btn resume-btn">
-              Resume
-            </button>
-            <button onClick={resetGame} className="game-btn reset-btn">
-              New Game
-            </button>
-          </div>
-        )}
+              {gameState === 'playing' && (
+                <Box
+                  position="absolute"
+                  top={16}
+                  right={16}
+                  display="flex"
+                  gap={1}
+                  alignItems="center"
+                >
+                  <Chip 
+                    label={`Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`}
+                    size="small"
+                    variant="outlined"
+                  />
+                  <Button 
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Pause />}
+                    onClick={pauseGame}
+                  >
+                    Pause
+                  </Button>
+                </Box>
+              )}
+              </Paper>
+            </Grid>
+          </Grid>
 
-        {gameState === 'gameOver' && (
-          <div className="game-message">
-            <p className="game-over">
-              {playerScore >= winningScore ? 'You Win!' : 'AI Wins!'}
-            </p>
-            <p>Final Score: {playerScore} - {aiScore}</p>
-            <button onClick={resetGame} className="game-btn reset-btn">
-              Play Again
-            </button>
-          </div>
-        )}
-
-        {gameState === 'serving' && (
-          <div className="game-message">
-            <p className="serving">Ready to Serve</p>
-            <p>Difficulty: <span className="difficulty-display">{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</span></p>
-            <button onClick={serveBall} className="game-btn serve-btn">
-              Serve Ball
-            </button>
-          </div>
-        )}
-
-        {gameState === 'playing' && (
-          <div className="game-controls-playing">
-            <button onClick={pauseGame} className="game-btn pause-btn">
-              Pause
-            </button>
-            <span className="controls-hint">Press SPACE to pause</span>
-            <span className="difficulty-display">Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</span>
-          </div>
-        )}
-      </div>
-    </div>
+          {/* Controls */}
+          <Card sx={{ maxWidth: 600, mx: 'auto', mt: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom color="primary" textAlign="center">
+                How to Play
+              </Typography>
+              <List dense>
+                <ListItem>
+                  <ListItemIcon>🖁</ListItemIcon>
+                  <ListItemText primary="Move your mouse to control the left paddle" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>⚽</ListItemIcon>
+                  <ListItemText primary="Hit the ball back and forth with your opponent" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>⏸️</ListItemIcon>
+                  <ListItemText primary="Press SPACE to pause the game" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>🏆</ListItemIcon>
+                  <ListItemText primary={`First to ${winningScore} points wins the match`} />
+                </ListItem>
+              </List>
+            </CardContent>
+          </Card>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };
 

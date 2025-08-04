@@ -130,13 +130,13 @@ const Frogger = () => {
 
     // Road lanes (cars) - positioned in road zone (200-400)
     for (let lane = 0; lane < 5; lane++) {
-      const y = 220 + (lane * laneHeight);
-      const speed = (lane % 2 === 0 ? 1.5 : -1.5) * (1 + level * 0.2);
+      const y = 200 + (lane * laneHeight);
+      const speed = (lane % 2 === 0 ? 2 : -2) * (1 + level * 0.2);
       
       for (let i = 0; i < 3; i++) {
         newCars.push({
           x: i * 150 + (lane % 2 === 0 ? 0 : 200),
-          y: y,
+          y: y + 10, // Center cars in lanes better
           width: 40,
           height: 20,
           speed: speed,
@@ -147,15 +147,15 @@ const Frogger = () => {
 
     // Water lanes (logs and turtles) - positioned in water zone (40-160)
     for (let lane = 0; lane < 3; lane++) {
-      const y = 60 + (lane * laneHeight);
-      const speed = (lane % 2 === 0 ? 1 : -1) * (1 + level * 0.1);
+      const y = 40 + (lane * laneHeight);
+      const speed = (lane % 2 === 0 ? 1.5 : -1.5) * (1 + level * 0.1);
       
       if (lane % 2 === 0) {
         // Logs
         for (let i = 0; i < 2; i++) {
           newLogs.push({
             x: i * 200 + 50,
-            y: y,
+            y: y + 10, // Center logs in lanes better
             width: 80,
             height: 20,
             speed: speed
@@ -166,7 +166,7 @@ const Frogger = () => {
         for (let i = 0; i < 3; i++) {
           newTurtles.push({
             x: i * 120 + 30,
-            y: y,
+            y: y + 10, // Center turtles in lanes better
             width: 60,
             height: 20,
             speed: speed,
@@ -180,7 +180,7 @@ const Frogger = () => {
     setCars(newCars);
     setLogs(newLogs);
     setTurtles(newTurtles);
-  }, [level]);
+  }, [level, laneHeight]);
 
   const resetGame = useCallback(() => {
     setFrog({ x: 200, y: 480 });
@@ -218,7 +218,7 @@ const Frogger = () => {
           newX = Math.max(0, prevFrog.x - 20);
           break;
         case 'RIGHT':
-          newX = Math.min(380, prevFrog.x + 20);
+          newX = Math.min(canvasWidth - frogSize, prevFrog.x + 20);
           break;
         default:
           break;
@@ -233,7 +233,7 @@ const Frogger = () => {
 
       return { x: newX, y: newY };
     });
-  }, [gameState, level]);
+  }, [gameState, level, canvasWidth, frogSize]);
 
   const checkCollisions = useCallback(() => {
     const frogRect = {
@@ -256,7 +256,7 @@ const Frogger = () => {
     if ((frog.y >= zones.topSafe.start && frog.y < zones.topSafe.end) ||
         (frog.y >= zones.middleSafe.start && frog.y < zones.middleSafe.end) ||
         (frog.y >= zones.bottomSafe.start && frog.y < zones.bottomSafe.end)) {
-      return null; // Safe zone, no collision
+      return { type: 'safe' }; // Safe zone, no collision
     }
 
     // Check car collisions (road area)
@@ -266,58 +266,41 @@ const Frogger = () => {
             frogRect.x + frogRect.width > car.x &&
             frogRect.y < car.y + car.height &&
             frogRect.y + frogRect.height > car.y) {
-          return 'car';
+          return { type: 'car' };
         }
       }
-      return null; // In road but no car collision
+      return { type: 'safe' }; // In road but no car collision
     }
 
     // Check water area
     if (frog.y >= zones.water.start && frog.y < zones.water.end) {
-      let onSafeObject = false;
-
       // Check if on log
       for (let log of logs) {
         if (frogRect.x < log.x + log.width &&
             frogRect.x + frogRect.width > log.x &&
             frogRect.y < log.y + log.height &&
             frogRect.y + frogRect.height > log.y) {
-          onSafeObject = true;
-          // Move frog with log
-          setFrog(prev => ({
-            ...prev,
-            x: Math.max(0, Math.min(380, prev.x + log.speed))
-          }));
-          break;
+          return { type: 'log', object: log };
         }
       }
 
       // Check if on turtle (and not submerged)
-      if (!onSafeObject) {
-        for (let turtle of turtles) {
-          if (!turtle.submerged &&
-              frogRect.x < turtle.x + turtle.width &&
-              frogRect.x + frogRect.width > turtle.x &&
-              frogRect.y < turtle.y + turtle.height &&
-              frogRect.y + frogRect.height > turtle.y) {
-            onSafeObject = true;
-            // Move frog with turtle
-            setFrog(prev => ({
-              ...prev,
-              x: Math.max(0, Math.min(380, prev.x + turtle.speed))
-            }));
-            break;
-          }
+      for (let turtle of turtles) {
+        if (!turtle.submerged &&
+            frogRect.x < turtle.x + turtle.width &&
+            frogRect.x + frogRect.width > turtle.x &&
+            frogRect.y < turtle.y + turtle.height &&
+            frogRect.y + frogRect.height > turtle.y) {
+          return { type: 'turtle', object: turtle };
         }
       }
 
-      if (!onSafeObject) {
-        return 'water';
-      }
+      // If in water but not on any safe object
+      return { type: 'water' };
     }
 
-    return null;
-  }, [frog, cars, logs, turtles]);
+    return { type: 'safe' };
+  }, [frog, cars, logs, turtles, frogSize]);
 
   const updateGame = useCallback(() => {
     if (gameState !== 'playing') return;
@@ -360,9 +343,36 @@ const Frogger = () => {
       }))
     );
 
-    // Check collisions
+    // Check collisions after object updates
     const collision = checkCollisions();
-    if (collision) {
+    
+    if (collision.type === 'car' || collision.type === 'water') {
+      // Frog hit a car or drowned
+      setLives(prev => {
+        const newLives = prev - 1;
+        if (newLives <= 0) {
+          setGameState('gameOver');
+        } else {
+          setFrog({ x: 200, y: 480 });
+        }
+        return newLives;
+      });
+    } else if (collision.type === 'log') {
+      // Frog is on a log, move with it
+      setFrog(prev => ({
+        ...prev,
+        x: Math.max(0, Math.min(canvasWidth - frogSize, prev.x + collision.object.speed))
+      }));
+    } else if (collision.type === 'turtle') {
+      // Frog is on a turtle, move with it
+      setFrog(prev => ({
+        ...prev,
+        x: Math.max(0, Math.min(canvasWidth - frogSize, prev.x + collision.object.speed))
+      }));
+    }
+    
+    // Check if frog fell off the screen sides
+    if (frog.x < 0 || frog.x > canvasWidth - frogSize) {
       setLives(prev => {
         const newLives = prev - 1;
         if (newLives <= 0) {
@@ -373,7 +383,7 @@ const Frogger = () => {
         return newLives;
       });
     }
-  }, [gameState, checkCollisions]);
+  }, [gameState, checkCollisions, frog.x, canvasWidth, frogSize]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;

@@ -1,5 +1,28 @@
 // src/games/TicTacToe.js
 import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Chip,
+  Stack,
+  Card,
+  CardContent,
+  TextField,
+  Grid,
+  useMediaQuery,
+  useTheme
+} from '@mui/material';
+import { 
+  RestartAlt,
+  Edit,
+  Close,
+  EmojiEvents
+} from '@mui/icons-material';
+import { ThemeProvider } from '@mui/material/styles';
+import { gameThemes } from '../theme/gameTheme';
 import './TicTacToe.css';
 
 const TicTacToe = () => {
@@ -111,105 +134,238 @@ const TicTacToe = () => {
     return `Game ${gameNumber} - Next: ${playerNames[xIsNext ? 'X' : 'O']}`;
   };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
-    <div className="tictactoe-container">
-      <div className="game-header">
-        <h2>Tic Tac Toe - Best of 5</h2>
-        <div className="match-info">
-          <p>First to win 3 games wins the match!</p>
-        </div>
-        <div className="scoreboard">
-          <div className="score-item">
-            <span className="score-label">{playerNames.X}</span>
-            <span className="score-value x">{scores.X}</span>
-          </div>
-          <div className="score-item">
-            <span className="score-label">Draws</span>
-            <span className="score-value draw">{scores.draws}</span>
-          </div>
-          <div className="score-item">
-            <span className="score-label">{playerNames.O}</span>
-            <span className="score-value o">{scores.O}</span>
-          </div>
-        </div>
-        {showNameInput && (
-          <div className="name-input-container">
-            <div className="name-input-group">
-              <label>Player X Name:</label>
-              <input
-                type="text"
-                value={playerNames.X === 'Player X' ? '' : playerNames.X}
-                onChange={(e) => handleNameChange('X', e.target.value)}
-                placeholder="Enter name for X"
-                maxLength="15"
-              />
-            </div>
-            <div className="name-input-group">
-              <label>Player O Name:</label>
-              <input
-                type="text"
-                value={playerNames.O === 'Player O' ? '' : playerNames.O}
-                onChange={(e) => handleNameChange('O', e.target.value)}
-                placeholder="Enter name for O"
-                maxLength="15"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="status-container">
-        <div className={`status ${gameState}`}>
-          {getStatusMessage()}
-        </div>
-        {gameState === 'playing' && !matchWinner && (
-          <div className="current-player">
-            <span className={`player-indicator ${xIsNext ? 'x' : 'o'}`}>
-              {xIsNext ? 'X' : 'O'}
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="board-container">
-        <div className="board">
-          {board.map((square, i) => (
-            <button
-              key={i}
-              className={getSquareClass(i)}
-              onClick={() => handleClick(i)}
-              disabled={gameState !== 'playing' || matchWinner}
+    <ThemeProvider theme={gameThemes.tictactoe}>
+      <Box 
+        sx={{ 
+          minHeight: '100vh', 
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          py: { xs: 2, md: 4 }
+        }}
+      >
+        <Container maxWidth={isMobile ? "sm" : "lg"}>
+          {/* Header */}
+          <Box textAlign="center" mb={{ xs: 2, md: 4 }}>
+            <Typography 
+              variant="h3" 
+              component="h1" 
+              sx={{ 
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #9c27b0, #ba68c8, #ce93d8)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 2,
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+              }}
             >
-              {square && (
-                <span className="square-content">
-                  {square}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+              ⭕ Tic Tac Toe
+            </Typography>
+            
+            <Typography variant="h6" color="text.secondary" mb={2}>
+              Best of 5 - First to win 3 games wins the match!
+            </Typography>
+            
+            <Stack 
+              direction={{ xs: 'column', sm: 'row' }} 
+              spacing={{ xs: 1, sm: 2 }} 
+              justifyContent="center"
+              flexWrap="wrap"
+              gap={1}
+            >
+              <Chip 
+                label={`${playerNames.X}: ${scores.X}`} 
+                color="primary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+              <Chip 
+                label={`Draws: ${scores.draws}`} 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+              <Chip 
+                label={`${playerNames.O}: ${scores.O}`} 
+                color="secondary" 
+                variant="outlined"
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+                size={isMobile ? "small" : "medium"}
+              />
+            </Stack>
+          </Box>
 
-      <div className="game-controls">
-        <button className="game-btn name-btn" onClick={toggleNameInput}>
-          {showNameInput ? 'Hide Names' : 'Set Player Names'}
-        </button>
-        {matchWinner ? (
-          <button className="game-btn new-match-btn" onClick={resetMatch}>
-            New Match
-          </button>
-        ) : (
-          <>
-            <button className="game-btn new-round-btn" onClick={resetGame}>
-              {gameState === 'playing' ? 'Reset Game' : 'Next Game'}
-            </button>
-            <button className="game-btn reset-match-btn" onClick={resetMatch}>
-              Reset Match
-            </button>
-          </>
-        )}
-      </div>
-    </div>
+          {/* Player Name Input */}
+          {showNameInput && (
+            <Card sx={{ maxWidth: 500, mx: 'auto', mb: 3 }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom color="primary" textAlign="center">
+                  Player Names
+                </Typography>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  <TextField
+                    label="Player X Name"
+                    value={playerNames.X === 'Player X' ? '' : playerNames.X}
+                    onChange={(e) => handleNameChange('X', e.target.value)}
+                    placeholder="Enter name for X"
+                    inputProps={{ maxLength: 15 }}
+                    size="small"
+                    fullWidth
+                  />
+                  <TextField
+                    label="Player O Name"
+                    value={playerNames.O === 'Player O' ? '' : playerNames.O}
+                    onChange={(e) => handleNameChange('O', e.target.value)}
+                    placeholder="Enter name for O"
+                    inputProps={{ maxLength: 15 }}
+                    size="small"
+                    fullWidth
+                  />
+                </Stack>
+                <Box textAlign="center" mt={2}>
+                  <Button 
+                    variant="outlined" 
+                    startIcon={<Close />}
+                    onClick={toggleNameInput}
+                    size="small"
+                  >
+                    Done
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Game Status */}
+          <Card sx={{ maxWidth: 600, mx: 'auto', mb: 3 }}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <Typography 
+                variant="h5" 
+                gutterBottom 
+                color={matchWinner ? "success" : winner ? (winner.winner === 'X' ? "primary" : "secondary") : "text.primary"}
+              >
+                {getStatusMessage()}
+              </Typography>
+              {gameState === 'playing' && !matchWinner && (
+                <Chip 
+                  label={`${playerNames[xIsNext ? 'X' : 'O']}'s Turn`}
+                  color={xIsNext ? "primary" : "secondary"}
+                  variant="filled"
+                  sx={{ fontSize: '1rem', py: 2, px: 3 }}
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Game Board */}
+          <Box display="flex" justifyContent="center" mb={3}>
+            <Paper 
+              elevation={3}
+              sx={{ 
+                p: 2,
+                borderRadius: 3,
+                background: 'rgba(0, 0, 0, 0.8)',
+              }}
+            >
+              <Grid container spacing={1} sx={{ width: isMobile ? 300 : 360 }}>
+                {board.map((square, i) => (
+                  <Grid item xs={4} key={i}>
+                    <Paper
+                      component="button"
+                      onClick={() => handleClick(i)}
+                      disabled={gameState !== 'playing' || matchWinner || square}
+                      sx={{
+                        width: '100%',
+                        height: isMobile ? 90 : 110,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: { xs: '2rem', md: '3rem' },
+                        fontWeight: 'bold',
+                        cursor: (gameState === 'playing' && !matchWinner && !square) ? 'pointer' : 'default',
+                        backgroundColor: winningLine && winningLine.includes(i) 
+                          ? 'rgba(156, 39, 176, 0.3)' 
+                          : 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(156, 39, 176, 0.3)',
+                        borderRadius: 2,
+                        color: square === 'X' ? 'primary.main' : square === 'O' ? 'secondary.main' : 'transparent',
+                        '&:hover': {
+                          backgroundColor: (gameState === 'playing' && !matchWinner && !square) 
+                            ? 'rgba(156, 39, 176, 0.1)' 
+                            : undefined
+                        },
+                        '&:disabled': {
+                          backgroundColor: winningLine && winningLine.includes(i) 
+                            ? 'rgba(156, 39, 176, 0.3)' 
+                            : 'rgba(255, 255, 255, 0.05)',
+                        },
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {square}
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+            </Paper>
+          </Box>
+
+          {/* Game Controls */}
+          <Stack 
+            direction={{ xs: 'column', sm: 'row' }} 
+            spacing={2} 
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Button 
+              variant="outlined" 
+              startIcon={<Edit />}
+              onClick={toggleNameInput}
+              size={isMobile ? "small" : "medium"}
+            >
+              {showNameInput ? 'Hide Names' : 'Set Player Names'}
+            </Button>
+            
+            {matchWinner ? (
+              <Button 
+                variant="contained" 
+                startIcon={<EmojiEvents />}
+                onClick={resetMatch}
+                sx={{ 
+                  background: 'linear-gradient(45deg, #4caf50, #81c784)'
+                }}
+                size={isMobile ? "small" : "medium"}
+              >
+                New Match
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="contained" 
+                  startIcon={<RestartAlt />}
+                  onClick={resetGame}
+                  color="primary"
+                  size={isMobile ? "small" : "medium"}
+                >
+                  {gameState === 'playing' ? 'Reset Game' : 'Next Game'}
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  onClick={resetMatch}
+                  size={isMobile ? "small" : "medium"}
+                >
+                  Reset Match
+                </Button>
+              </>
+            )}
+          </Stack>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };
 
