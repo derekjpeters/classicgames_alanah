@@ -33,40 +33,40 @@ import soundGenerator from '../utils/soundUtils';
 import './PacMan.css';
 
 // Game constants
-const CELL_SIZE = 16;
+const CELL_SIZE = 20;
 const MAZE_WIDTH = 19;
 const MAZE_HEIGHT = 21;
 
-// Authentic Pac-Man maze (0=wall, 1=dot, 2=power pellet, 3=empty, 4=ghost gate)
+// Original Pac-Man maze layout (0=wall, 1=dot, 2=power pellet, 3=empty)
 const MAZE_LAYOUT = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0],
-  [0,2,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,2,0],
+  [0,2,0,0,1,1,1,1,1,0,1,1,1,1,1,0,0,2,0],
   [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0],
-  [0,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0],
-  [0,0,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0],
-  [3,3,3,3,0,1,0,3,3,3,3,3,0,1,0,3,3,3,3],
-  [0,0,0,0,0,1,0,3,0,4,0,3,0,1,0,0,0,0,0],
-  [3,3,3,3,3,1,3,3,0,3,0,3,3,1,3,3,3,3,3],
-  [0,0,0,0,0,1,0,3,0,0,0,3,0,1,0,0,0,0,0],
-  [3,3,3,3,0,1,0,3,3,3,3,3,0,1,0,3,3,3,3],
-  [0,0,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0],
-  [0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0],
-  [0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0],
-  [0,2,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,2,0],
-  [0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0],
-  [0,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0],
+  [0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0],
+  [0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0],
+  [0,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0],
+  [3,3,3,0,1,0,3,1,1,3,1,1,3,0,1,0,3,3,3],
+  [0,0,0,0,1,0,3,0,3,3,3,0,3,0,1,0,0,0,0],
+  [3,3,3,3,1,1,3,0,3,3,3,0,3,1,1,3,3,3,3],
+  [0,0,0,0,1,0,3,0,0,0,0,0,3,0,1,0,0,0,0],
+  [3,3,3,0,1,0,3,3,3,3,3,3,3,0,1,0,3,3,3],
+  [0,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0],
+  [0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0],
+  [0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0],
+  [0,2,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,2,0],
+  [0,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0],
+  [0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0],
   [0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0],
   [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
 
-// Ghost configurations
+// Ghost configurations - authentic colors and positions
 const GHOST_CONFIGS = [
   { id: 'blinky', color: '#FF0000', homeX: 9, homeY: 9, scatterX: 17, scatterY: 1 },
-  { id: 'pinky', color: '#FFB8FF', homeX: 8, homeY: 9, scatterX: 1, scatterY: 1 },
-  { id: 'inky', color: '#00FFFF', homeX: 10, homeY: 9, scatterX: 17, scatterY: 19 },
+  { id: 'pinky', color: '#FFB8DE', homeX: 8, homeY: 9, scatterX: 1, scatterY: 1 },
+  { id: 'inky', color: '#00FFDE', homeX: 10, homeY: 9, scatterX: 17, scatterY: 19 },
   { id: 'clyde', color: '#FFB852', homeX: 9, homeY: 10, scatterX: 1, scatterY: 19 }
 ];
 
@@ -76,8 +76,8 @@ const PacMan = () => {
   const gameDataRef = useRef({
     pacman: { 
       x: 9, y: 15, 
-      direction: 0, // 0=right, 1=down, 2=left, 3=up
-      nextDirection: 0,
+      direction: 2, // Start facing left like original
+      nextDirection: 2,
       moving: false,
       animFrame: 0
     },
@@ -129,8 +129,8 @@ const PacMan = () => {
     // Reset Pac-Man
     gameData.pacman = {
       x: 9, y: 15,
-      direction: 0,
-      nextDirection: 0,
+      direction: 2,
+      nextDirection: 2,
       moving: false,
       animFrame: 0
     };
@@ -196,17 +196,20 @@ const PacMan = () => {
     return { x: newX, y };
   };
 
-  // Update Pac-Man
+  // Update Pac-Man with grid-based movement
   const updatePacMan = useCallback(() => {
     const gameData = gameDataRef.current;
     const pacman = gameData.pacman;
-    const speed = 0.08; // cells per frame
     
     // Try to change direction if requested
     if (pacman.nextDirection !== pacman.direction) {
       const nextDir = getDirectionVector(pacman.nextDirection);
-      const testX = pacman.x + nextDir.dx * speed;
-      const testY = pacman.y + nextDir.dy * speed;
+      let testX = pacman.x + nextDir.dx;
+      let testY = pacman.y + nextDir.dy;
+      
+      // Handle tunnel wrapping
+      if (testX < 0) testX = MAZE_WIDTH - 1;
+      if (testX >= MAZE_WIDTH) testX = 0;
       
       if (isValidPosition(testX, testY)) {
         pacman.direction = pacman.nextDirection;
@@ -215,22 +218,21 @@ const PacMan = () => {
     
     // Move in current direction
     const dir = getDirectionVector(pacman.direction);
-    const newX = pacman.x + dir.dx * speed;
-    const newY = pacman.y + dir.dy * speed;
+    let newX = pacman.x + dir.dx;
+    let newY = pacman.y + dir.dy;
+    
+    // Handle tunnel wrapping
+    if (newX < 0) newX = MAZE_WIDTH - 1;
+    if (newX >= MAZE_WIDTH) newX = 0;
     
     if (isValidPosition(newX, newY)) {
-      const wrapped = wrapPosition(newX, newY);
-      pacman.x = wrapped.x;
-      pacman.y = wrapped.y;
+      pacman.x = newX;
+      pacman.y = newY;
       pacman.moving = true;
       pacman.animFrame = (pacman.animFrame + 1) % 20;
       
       // Check for dot collection
-      const cellX = Math.floor(pacman.x);
-      const cellY = Math.floor(pacman.y);
-      
-      // Collect dots
-      const dotIndex = gameData.dots.findIndex(dot => dot.x === cellX && dot.y === cellY);
+      const dotIndex = gameData.dots.findIndex(dot => dot.x === newX && dot.y === newY);
       if (dotIndex !== -1) {
         soundGenerator.waka();
         gameData.dots.splice(dotIndex, 1);
@@ -238,7 +240,7 @@ const PacMan = () => {
       }
       
       // Collect power pellets
-      const powerIndex = gameData.powerPellets.findIndex(pellet => pellet.x === cellX && pellet.y === cellY);
+      const powerIndex = gameData.powerPellets.findIndex(pellet => pellet.x === newX && pellet.y === newY);
       if (powerIndex !== -1) {
         soundGenerator.powerUp();
         gameData.powerPellets.splice(powerIndex, 1);
@@ -248,15 +250,15 @@ const PacMan = () => {
         gameData.ghosts.forEach(ghost => {
           if (ghost.mode !== 'eaten') {
             ghost.mode = 'frightened';
-            ghost.modeTimer = 300; // 5 seconds
-            ghost.direction = (ghost.direction + 2) % 4; // Reverse direction
+            ghost.modeTimer = 300;
+            ghost.direction = (ghost.direction + 2) % 4;
           }
         });
       }
     } else {
       pacman.moving = false;
     }
-  }, [isValidPosition, getDirectionVector, wrapPosition]);
+  }, [isValidPosition, getDirectionVector]);
 
   // Update ghosts with proper AI
   const updateGhosts = useCallback(() => {
@@ -423,8 +425,8 @@ const PacMan = () => {
         const pacman = gameData.pacman;
         pacman.x = 9;
         pacman.y = 15;
-        pacman.direction = 0;
-        pacman.nextDirection = 0;
+        pacman.direction = 2;
+        pacman.nextDirection = 2;
         
         gameData.ghosts.forEach(ghost => {
           ghost.x = ghost.homeX;
@@ -438,13 +440,20 @@ const PacMan = () => {
     }
   }, [initializeDots]);
 
-  // Game loop
+  // Game loop with timing control
   const gameLoop = useCallback(() => {
     if (gameState === 'playing') {
       const gameData = gameDataRef.current;
       
-      updatePacMan();
-      updateGhosts();
+      // Update every 4 frames for classic Pac-Man speed
+      if (gameData.gameTime % 4 === 0) {
+        updatePacMan();
+      }
+      
+      if (gameData.gameTime % 5 === 0) {
+        updateGhosts();
+      }
+      
       checkCollisions();
       checkLevelComplete();
       
@@ -460,7 +469,7 @@ const PacMan = () => {
         gameData.ghosts.forEach(ghost => {
           if (ghost.mode === 'scatter' || ghost.mode === 'chase') {
             ghost.mode = gameData.currentMode;
-            ghost.direction = (ghost.direction + 2) % 4; // Reverse direction
+            ghost.direction = (ghost.direction + 2) % 4;
           }
         });
       }
@@ -561,16 +570,17 @@ const PacMan = () => {
         ctx.fill();
       });
       
-      // Draw Pac-Man
+      // Draw Pac-Man - classic style
       const pacman = gameData.pacman;
       const pacX = pacman.x * CELL_SIZE + CELL_SIZE / 2;
       const pacY = pacman.y * CELL_SIZE + CELL_SIZE / 2;
+      const radius = CELL_SIZE / 2 - 2;
       
       ctx.fillStyle = '#FFFF00';
       ctx.beginPath();
       
-      // Always animate mouth
-      const mouthAngle = Math.sin(pacman.animFrame * 0.4) * 0.6 + 0.3;
+      // Classic mouth animation
+      const mouthAngle = pacman.moving ? Math.sin(pacman.animFrame * 0.5) * 0.8 + 0.2 : 0.6;
       let startAngle, endAngle;
       
       switch (pacman.direction) {
@@ -580,7 +590,7 @@ const PacMan = () => {
           break;
         case 1: // down
           startAngle = Math.PI / 2 + mouthAngle;
-          endAngle = Math.PI / 2 - mouthAngle;
+          endAngle = Math.PI * 3/2 - mouthAngle;
           break;
         case 2: // left
           startAngle = Math.PI + mouthAngle;
@@ -588,64 +598,73 @@ const PacMan = () => {
           break;
         case 3: // up
           startAngle = Math.PI * 3/2 + mouthAngle;
-          endAngle = Math.PI * 3/2 - mouthAngle;
+          endAngle = Math.PI / 2 - mouthAngle;
           break;
         default:
-          startAngle = 0.3;
-          endAngle = Math.PI * 2 - 0.3;
+          startAngle = 0.2;
+          endAngle = Math.PI * 2 - 0.2;
       }
       
-      ctx.arc(pacX, pacY, CELL_SIZE / 2 - 1, startAngle, endAngle);
+      ctx.arc(pacX, pacY, radius, startAngle, endAngle);
       ctx.lineTo(pacX, pacY);
       ctx.fill();
       
-      // Draw ghosts with better graphics
+      // Draw ghosts - classic Pac-Man style
       gameData.ghosts.forEach(ghost => {
         const ghostX = ghost.x * CELL_SIZE + CELL_SIZE / 2;
         const ghostY = ghost.y * CELL_SIZE + CELL_SIZE / 2;
-        const radius = CELL_SIZE / 2 - 1;
+        const radius = CELL_SIZE / 2 - 2;
         
         let bodyColor = ghost.color;
         if (ghost.mode === 'frightened') {
           bodyColor = ghost.modeTimer > 60 ? '#0000FF' : (ghost.modeTimer % 20 < 10 ? '#0000FF' : '#FFFFFF');
         } else if (ghost.mode === 'eaten') {
-          bodyColor = '#666666';
+          // Draw just eyes when eaten
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(ghostX - 4, ghostY - 4, 3, 3);
+          ctx.fillRect(ghostX + 1, ghostY - 4, 3, 3);
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(ghostX - 3, ghostY - 3, 1, 1);
+          ctx.fillRect(ghostX + 2, ghostY - 3, 1, 1);
+          return;
         }
         
         ctx.fillStyle = bodyColor;
         
-        // Ghost body with wavy bottom
+        // Classic ghost body shape
         ctx.beginPath();
-        ctx.arc(ghostX, ghostY - 2, radius, Math.PI, 0);
+        // Top rounded part
+        ctx.arc(ghostX, ghostY - 3, radius, Math.PI, 0);
         
-        // Wavy bottom
-        const waveOffset = Math.sin(Date.now() * 0.01) * 2;
-        for (let i = 0; i <= 6; i++) {
-          const x = ghostX - radius + (i * radius * 2 / 6);
-          const y = ghostY + radius - 2 + Math.sin(i + waveOffset) * 3;
-          if (i === 0) {
-            ctx.lineTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
+        // Straight sides
+        ctx.lineTo(ghostX + radius, ghostY + radius - 3);
+        
+        // Bottom wavy edge - classic pac-man style
+        const waveSize = 3;
+        for (let i = 0; i < 4; i++) {
+          const x1 = ghostX + radius - (i * radius / 2);
+          const x2 = ghostX + radius - ((i + 1) * radius / 2);
+          const y1 = ghostY + radius - 3;
+          const y2 = i % 2 === 0 ? ghostY + radius : ghostY + radius - waveSize;
+          ctx.lineTo(x1, y1);
+          ctx.lineTo(x2, y2);
         }
+        
         ctx.closePath();
         ctx.fill();
         
-        // Ghost eyes
+        // Classic ghost eyes
         if (ghost.mode !== 'eaten') {
+          // White eye background
           ctx.fillStyle = '#FFFFFF';
-          ctx.beginPath();
-          ctx.arc(ghostX - 4, ghostY - 2, 3, 0, Math.PI * 2);
-          ctx.arc(ghostX + 4, ghostY - 2, 3, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillRect(ghostX - 6, ghostY - 6, 4, 5);
+          ctx.fillRect(ghostX + 2, ghostY - 6, 4, 5);
           
-          // Eye pupils
+          // Black pupils
           ctx.fillStyle = ghost.mode === 'frightened' ? '#FF0000' : '#000000';
-          ctx.beginPath();
-          ctx.arc(ghostX - 4, ghostY - 2, 1.5, 0, Math.PI * 2);
-          ctx.arc(ghostX + 4, ghostY - 2, 1.5, 0, Math.PI * 2);
-          ctx.fill();
+          const pupilSize = 2;
+          ctx.fillRect(ghostX - 5, ghostY - 5, pupilSize, pupilSize);
+          ctx.fillRect(ghostX + 3, ghostY - 5, pupilSize, pupilSize);
         }
       });
       
