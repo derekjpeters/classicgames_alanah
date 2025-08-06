@@ -251,6 +251,67 @@ const Tetris = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameState, currentPiece, currentPosition, board, isValidPosition, rotatePiece]);
 
+  // Touch controls on canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    const handleTouchStart = (e) => {
+      if (gameState !== 'playing' || !currentPiece) return;
+      e.preventDefault();
+      
+      const touch = e.touches[0];
+      touchStartY = touch.clientY;
+      touchStartTime = Date.now();
+    };
+
+    const handleTouchEnd = (e) => {
+      if (gameState !== 'playing' || !currentPiece) return;
+      e.preventDefault();
+      
+      const touch = e.changedTouches[0];
+      const touchEndY = touch.clientY;
+      const touchEndTime = Date.now();
+      
+      const deltaY = touchEndY - touchStartY;
+      const touchDuration = touchEndTime - touchStartTime;
+      
+      // Check if it's a swipe down (minimum 50px movement downward)
+      if (deltaY > 50 && touchDuration < 500) {
+        // Swipe down - move piece down
+        setCurrentPosition(pos => {
+          const newPos = { ...pos, y: pos.y + 1 };
+          const canMove = isValidPosition(currentPiece, newPos, board);
+          if (canMove) {
+            soundGenerator.blip(300, 0.03);
+          }
+          return canMove ? newPos : pos;
+        });
+      } else if (Math.abs(deltaY) < 30 && touchDuration < 300) {
+        // Tap - rotate piece
+        setCurrentPiece(piece => {
+          const rotated = rotatePiece(piece);
+          const canRotate = isValidPosition(rotated, currentPosition, board);
+          if (canRotate) {
+            soundGenerator.blip(600, 0.05);
+          }
+          return canRotate ? rotated : piece;
+        });
+      }
+    };
+
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [gameState, currentPiece, currentPosition, board, isValidPosition, rotatePiece]);
+
   useEffect(() => {
     if (gameState === 'playing' && currentPiece) {
       const fallSpeed = Math.max(100, 1000 - (level - 1) * 100);
@@ -621,19 +682,19 @@ const Tetris = () => {
                         <ListItemIcon>
                           <KeyboardArrowLeft color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary={isMobile ? "Use touch controls below" : "← → Move piece"} />
+                        <ListItemText primary={isMobile ? "Tap game board to rotate" : "← → Move piece"} />
                       </ListItem>
                       <ListItem>
                         <ListItemIcon>
                           <KeyboardArrowDown color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary={isMobile ? "Tap ↓ to drop faster" : "↓ Soft drop"} />
+                        <ListItemText primary={isMobile ? "Swipe down on board to drop" : "↓ Soft drop"} />
                       </ListItem>
                       <ListItem>
                         <ListItemIcon>
                           <KeyboardArrowUp color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary={isMobile ? "Tap ↻ to rotate" : "↑ or Space to rotate"} />
+                        <ListItemText primary={isMobile ? "Use arrow buttons below" : "↑ or Space to rotate"} />
                       </ListItem>
                     </List>
                   </CardContent>
