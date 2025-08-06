@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 import { ThemeProvider } from '@mui/material/styles';
 import { gameThemes } from '../theme/gameTheme';
+import soundGenerator from '../utils/soundUtils';
 import './Snake.css';
 
 const Snake = () => {
@@ -49,6 +50,7 @@ const Snake = () => {
   }, [gridSize]);
 
   const resetGame = useCallback(() => {
+    soundGenerator.blip(400, 0.1);
     setSnake([{ x: 10, y: 10 }]);
     setDirection('RIGHT');
     setFood(generateFood());
@@ -61,8 +63,9 @@ const Snake = () => {
   }, [generateFood]);
 
   const startGame = useCallback(() => {
+    soundGenerator.blip(600, 0.1);
     setGameState('playing');
-  }, []);
+  }, []); 
 
   const checkCollision = useCallback((head, snakeBody) => {
     // Check wall collision
@@ -85,17 +88,49 @@ const Snake = () => {
       if (gameState !== 'playing') return;
       
       switch (e.key) {
-        case 'ArrowUp': if (direction !== 'DOWN') setDirection('UP'); break;
-        case 'ArrowDown': if (direction !== 'UP') setDirection('DOWN'); break;
-        case 'ArrowLeft': if (direction !== 'RIGHT') setDirection('LEFT'); break;
-        case 'ArrowRight': if (direction !== 'LEFT') setDirection('RIGHT'); break;
+        case 'ArrowUp': 
+          e.preventDefault(); // Prevent page scroll
+          if (direction !== 'DOWN' && snake.length > 1) {
+            // Prevent reverse if snake has more than 1 segment
+            if (direction !== 'UP') setDirection('UP');
+          } else if (snake.length === 1) {
+            setDirection('UP');
+          }
+          break;
+        case 'ArrowDown': 
+          e.preventDefault(); // Prevent page scroll
+          if (direction !== 'UP' && snake.length > 1) {
+            // Prevent reverse if snake has more than 1 segment
+            if (direction !== 'DOWN') setDirection('DOWN');
+          } else if (snake.length === 1) {
+            setDirection('DOWN');
+          }
+          break;
+        case 'ArrowLeft': 
+          e.preventDefault(); // Prevent page scroll
+          if (direction !== 'RIGHT' && snake.length > 1) {
+            // Prevent reverse if snake has more than 1 segment
+            if (direction !== 'LEFT') setDirection('LEFT');
+          } else if (snake.length === 1) {
+            setDirection('LEFT');
+          }
+          break;
+        case 'ArrowRight': 
+          e.preventDefault(); // Prevent page scroll
+          if (direction !== 'LEFT' && snake.length > 1) {
+            // Prevent reverse if snake has more than 1 segment
+            if (direction !== 'RIGHT') setDirection('RIGHT');
+          } else if (snake.length === 1) {
+            setDirection('RIGHT');
+          }
+          break;
         default: break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [direction, gameState]);
+  }, [direction, gameState, snake.length]);
 
   useEffect(() => {
     if (gameState === 'playing') {
@@ -112,6 +147,7 @@ const Snake = () => {
           }
 
           if (checkCollision(head, prevSnake)) {
+            soundGenerator.gameOver();
             setGameState('gameOver');
             return prevSnake;
           }
@@ -119,6 +155,7 @@ const Snake = () => {
           const newSnake = [head, ...prevSnake];
 
           if (head.x === food.x && head.y === food.y) {
+            soundGenerator.coin();
             setScore(prev => prev + 10);
             setFood(generateFood());
           } else {
@@ -343,6 +380,38 @@ const Snake = () => {
                     height: 'auto',
                     boxShadow: '0 8px 32px rgba(76, 175, 80, 0.15)'
                   }}
+                  onTouchStart={(e) => {
+                    if (gameState !== 'playing') return;
+                    e.preventDefault();
+                    const canvas = canvasRef.current;
+                    if (!canvas) return;
+                    
+                    const rect = canvas.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    const touchX = touch.clientX - rect.left;
+                    const canvasWidth = rect.width;
+                    
+                    // Tap on left half = turn left, right half = turn right
+                    if (touchX < canvasWidth / 2) {
+                      // Turn left (counterclockwise)
+                      switch (direction) {
+                        case 'UP': setDirection('LEFT'); break;
+                        case 'DOWN': setDirection('RIGHT'); break;
+                        case 'LEFT': setDirection('DOWN'); break;
+                        case 'RIGHT': setDirection('UP'); break;
+                        default: break;
+                      }
+                    } else {
+                      // Turn right (clockwise)
+                      switch (direction) {
+                        case 'UP': setDirection('RIGHT'); break;
+                        case 'DOWN': setDirection('LEFT'); break;
+                        case 'LEFT': setDirection('UP'); break;
+                        case 'RIGHT': setDirection('DOWN'); break;
+                        default: break;
+                      }
+                    }
+                  }}
                 />
               
               {gameState === 'start' && (
@@ -433,7 +502,7 @@ const Snake = () => {
                   <ListItemIcon>
                     <KeyboardArrowUp color="primary" />
                   </ListItemIcon>
-                  <ListItemText primary="Use arrow keys to control the snake" />
+                  <ListItemText primary={isMobile ? "Tap left/right side of screen to turn the snake" : "Use arrow keys to control the snake"} />
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>🍎</ListItemIcon>

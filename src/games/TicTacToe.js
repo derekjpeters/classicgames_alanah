@@ -22,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import { ThemeProvider } from '@mui/material/styles';
 import { gameThemes } from '../theme/gameTheme';
+import soundGenerator from '../utils/soundUtils';
 import './TicTacToe.css';
 
 const TicTacToe = () => {
@@ -51,13 +52,17 @@ const TicTacToe = () => {
         };
 
         if (updatedScores[winner.winner] >= 3) {
+          soundGenerator.victory();
           setMatchWinner(winner.winner);
+        } else {
+          soundGenerator.coin();
         }
 
         return updatedScores;
       });
     } else if (isDraw && gameState === 'playing') {
       setGameState('draw');
+      soundGenerator.blip(300, 0.2);
       setScores(prev => ({
         ...prev,
         draws: prev.draws + 1
@@ -68,6 +73,7 @@ const TicTacToe = () => {
   function handleClick(index) {
     if (board[index] || gameState !== 'playing' || matchWinner) return;
 
+    soundGenerator.blip(xIsNext ? 600 : 400, 0.1);
     const newBoard = [...board];
     newBoard[index] = xIsNext ? 'X' : 'O';
     setBoard(newBoard);
@@ -109,16 +115,6 @@ const TicTacToe = () => {
     setShowNameInput(!showNameInput);
   }
 
-  const getSquareClass = (index) => {
-    let className = 'square';
-    if (board[index]) {
-      className += ` filled ${board[index].toLowerCase()}`;
-    }
-    if (winningLine && winningLine.includes(index)) {
-      className += ' winning';
-    }
-    return className;
-  };
 
   const getStatusMessage = () => {
     if (matchWinner) {
@@ -211,7 +207,7 @@ const TicTacToe = () => {
                     value={playerNames.X === 'Player X' ? '' : playerNames.X}
                     onChange={(e) => handleNameChange('X', e.target.value)}
                     placeholder="Enter name for X"
-                    inputProps={{ maxLength: 15 }}
+                    slotProps={{ htmlInput: { maxLength: 15 } }}
                     size="small"
                     fullWidth
                   />
@@ -220,7 +216,7 @@ const TicTacToe = () => {
                     value={playerNames.O === 'Player O' ? '' : playerNames.O}
                     onChange={(e) => handleNameChange('O', e.target.value)}
                     placeholder="Enter name for O"
-                    inputProps={{ maxLength: 15 }}
+                    slotProps={{ htmlInput: { maxLength: 15 } }}
                     size="small"
                     fullWidth
                   />
@@ -275,6 +271,7 @@ const TicTacToe = () => {
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
+                  gridTemplateRows: 'repeat(3, 1fr)',
                   gap: 1,
                   width: isMobile ? 300 : 360,
                   height: isMobile ? 300 : 360,
@@ -288,8 +285,10 @@ const TicTacToe = () => {
                     variant="outlined"
                     sx={{
                       minWidth: 'unset',
-                      width: '100%',
-                      height: '100%',
+                      width: isMobile ? '96px' : '116px',
+                      height: isMobile ? '96px' : '116px',
+                      maxWidth: isMobile ? '96px' : '116px',
+                      maxHeight: isMobile ? '96px' : '116px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -322,7 +321,9 @@ const TicTacToe = () => {
                           : 'transparent',
                         border: '2px solid rgba(156, 39, 176, 0.5)'
                       },
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
+                      padding: 0,
+                      overflow: 'hidden'
                     }}
                   >
                     {square}

@@ -1,6 +1,8 @@
 # 🎮 Classic Games Collection
 
-A modern recreation of timeless arcade classics built with React and Material-UI. Experience the nostalgia of Snake, Pong, Tic Tac Toe, Tetris, Frogger, and Galaga with contemporary design, responsive layouts, and smooth gameplay on any device.
+A modern recreation of timeless arcade classics built with React and Material-UI. Experience the nostalgia of Snake, Pong, Tic Tac Toe, Tetris, Frogger, Galaga, and Pac-Man with contemporary design, responsive layouts, and smooth gameplay on any device.
+
+⚠️ **Please Note**: Some games are currently work-in-progress and may have gameplay issues. See the [Game Status](#-game-status) section below for details.
 
 ## 🌟 Features
 
@@ -10,7 +12,8 @@ A modern recreation of timeless arcade classics built with React and Material-UI
 - **Tic Tac Toe** - Strategic tournament-style gameplay with custom player names and best-of-5 format
 - **Tetris** - The iconic block-stacking puzzle game with falling pieces and line clearing
 - **🆕 Frogger** - Cross roads and rivers while avoiding obstacles with enhanced collision detection
-- **🆕 Galaga** - Enhanced space shooter with formation flying enemies and modernized graphics
+- **🆕 Galaga** - Enhanced space shooter with formation flying enemies and modernized graphics ⚠️ *Work in Progress*
+- **🆕 Pac-Man** - Navigate mazes, collect dots, and avoid ghosts ⚠️ *Work in Progress*
 
 ### ✨ **Modern Material-UI Design**
 - **Material-UI Components** - Professional UI with consistent theming
@@ -52,6 +55,27 @@ A modern recreation of timeless arcade classics built with React and Material-UI
 
 4. **Open your browser**
    Navigate to `http://localhost:3000` to see the application
+
+## 🎮 Game Status
+
+### ✅ **Fully Playable Games**
+- **🐍 Snake** - Complete with smooth movement and collision detection
+- **🏓 Pong** - Full gameplay with AI opponent and difficulty levels  
+- **⭕ Tic Tac Toe** - Complete tournament-style gameplay
+- **🧩 Tetris** - Full block-stacking game with line clearing
+- **🐸 Frogger** - Complete cross-the-road gameplay with mobile touch controls
+
+### ⚠️ **Work in Progress Games**
+- **🚀 Galaga** - *Known Issues*:
+  - Enemies freeze at bottom of screen after diving attacks
+  - Ship movement could be smoother  
+  - Enemy AI needs refinement for proper attack patterns
+- **👻 Pac-Man** - *Known Issues*:
+  - Visual design doesn't match classic Pac-Man aesthetics
+  - Ghost AI behavior needs improvement
+  - Maze design could be more authentic to original game
+
+**Note**: WIP games are playable but may have bugs or incomplete features. We're actively working on improvements!
 
 ### Building for Production
 ```bash

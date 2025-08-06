@@ -14,6 +14,7 @@ import {
   ListItemIcon,
   ListItemText,
   Grid,
+  IconButton,
   useMediaQuery,
   useTheme
 } from '@mui/material';
@@ -22,10 +23,13 @@ import {
   RestartAlt,
   KeyboardArrowUp,
   KeyboardArrowDown,
-  KeyboardArrowLeft
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  RotateRight
 } from '@mui/icons-material';
 import { ThemeProvider } from '@mui/material/styles';
 import { gameThemes } from '../theme/gameTheme';
+import soundGenerator from '../utils/soundUtils';
 import './Tetris.css';
 
 const BOARD_WIDTH = 10;
@@ -231,7 +235,11 @@ const Tetris = () => {
         case ' ':
           setCurrentPiece(piece => {
             const rotated = rotatePiece(piece);
-            return isValidPosition(rotated, currentPosition, board) ? rotated : piece;
+            const canRotate = isValidPosition(rotated, currentPosition, board);
+            if (canRotate) {
+              soundGenerator.blip(600, 0.05);
+            }
+            return canRotate ? rotated : piece;
           });
           break;
         default:
@@ -254,8 +262,13 @@ const Tetris = () => {
           if (isValidPosition(currentPiece, newPos, board)) {
             return newPos;
           } else {
+            soundGenerator.drop();
             const newBoard = placePiece(currentPiece, pos, board);
             const { board: clearedBoard, linesCleared: cleared } = clearLines(newBoard);
+            
+            if (cleared > 0) {
+              soundGenerator.lineClear();
+            }
             
             setBoard(clearedBoard);
             setLinesCleared(prev => prev + cleared);
@@ -265,6 +278,7 @@ const Tetris = () => {
             const { piece: newPiece, startPos } = spawnNewPiece();
             
             if (!isValidPosition(newPiece, startPos, clearedBoard)) {
+              soundGenerator.gameOver();
               setGameState('gameOver');
               return pos;
             }
@@ -335,6 +349,56 @@ const Tetris = () => {
       ctx.stroke();
     }
   }, [board, currentPiece, currentPosition, gameState]);
+
+  // Mobile touch controls
+  const handleTouchControl = useCallback((action) => {
+    if (gameState !== 'playing' || !currentPiece) return;
+    
+    switch (action) {
+      case 'left':
+        setCurrentPosition(pos => {
+          const newPos = { ...pos, x: pos.x - 1 };
+          const canMove = isValidPosition(currentPiece, newPos, board);
+          if (canMove) {
+            soundGenerator.blip(400, 0.03);
+          }
+          return canMove ? newPos : pos;
+        });
+        break;
+      case 'right':
+        setCurrentPosition(pos => {
+          const newPos = { ...pos, x: pos.x + 1 };
+          const canMove = isValidPosition(currentPiece, newPos, board);
+          if (canMove) {
+            soundGenerator.blip(400, 0.03);
+          }
+          return canMove ? newPos : pos;
+        });
+        break;
+      case 'down':
+        setCurrentPosition(pos => {
+          const newPos = { ...pos, y: pos.y + 1 };
+          const canMove = isValidPosition(currentPiece, newPos, board);
+          if (canMove) {
+            soundGenerator.blip(300, 0.03);
+          }
+          return canMove ? newPos : pos;
+        });
+        break;
+      case 'rotate':
+        setCurrentPiece(piece => {
+          const rotated = rotatePiece(piece);
+          const canRotate = isValidPosition(rotated, currentPosition, board);
+          if (canRotate) {
+            soundGenerator.blip(600, 0.05);
+          }
+          return canRotate ? rotated : piece;
+        });
+        break;
+      default:
+        break;
+    }
+  }, [gameState, currentPiece, currentPosition, board, isValidPosition, rotatePiece]);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -557,23 +621,102 @@ const Tetris = () => {
                         <ListItemIcon>
                           <KeyboardArrowLeft color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary="← → Move piece" />
+                        <ListItemText primary={isMobile ? "Use touch controls below" : "← → Move piece"} />
                       </ListItem>
                       <ListItem>
                         <ListItemIcon>
                           <KeyboardArrowDown color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary="↓ Soft drop" />
+                        <ListItemText primary={isMobile ? "Tap ↓ to drop faster" : "↓ Soft drop"} />
                       </ListItem>
                       <ListItem>
                         <ListItemIcon>
                           <KeyboardArrowUp color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary="↑ or Space to rotate" />
+                        <ListItemText primary={isMobile ? "Tap ↻ to rotate" : "↑ or Space to rotate"} />
                       </ListItem>
                     </List>
                   </CardContent>
                 </Card>
+                
+                {/* Mobile Touch Controls */}
+                {isMobile && gameState === 'playing' && (
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom color="primary" textAlign="center">
+                        Touch Controls
+                      </Typography>
+                      
+                      {/* Top Row - Rotate */}
+                      <Box display="flex" justifyContent="center" mb={1}>
+                        <IconButton
+                          onClick={() => handleTouchControl('rotate')}
+                          disabled={gameState !== 'playing'}
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            '&:hover': { bgcolor: 'primary.dark' },
+                            '&:disabled': { bgcolor: 'grey.600' }
+                          }}
+                        >
+                          <RotateRight fontSize="large" />
+                        </IconButton>
+                      </Box>
+                      
+                      {/* Middle Row - Left and Right */}
+                      <Box display="flex" justifyContent="center" gap={2} mb={1}>
+                        <IconButton
+                          onClick={() => handleTouchControl('left')}
+                          disabled={gameState !== 'playing'}
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            '&:hover': { bgcolor: 'primary.dark' },
+                            '&:disabled': { bgcolor: 'grey.600' }
+                          }}
+                        >
+                          <KeyboardArrowLeft fontSize="large" />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleTouchControl('right')}
+                          disabled={gameState !== 'playing'}
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            '&:hover': { bgcolor: 'primary.dark' },
+                            '&:disabled': { bgcolor: 'grey.600' }
+                          }}
+                        >
+                          <KeyboardArrowRight fontSize="large" />
+                        </IconButton>
+                      </Box>
+                      
+                      {/* Bottom Row - Drop */}
+                      <Box display="flex" justifyContent="center">
+                        <IconButton
+                          onClick={() => handleTouchControl('down')}
+                          disabled={gameState !== 'playing'}
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            '&:hover': { bgcolor: 'primary.dark' },
+                            '&:disabled': { bgcolor: 'grey.600' }
+                          }}
+                        >
+                          <KeyboardArrowDown fontSize="large" />
+                        </IconButton>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                )}
                 
                 {/* Reset Button for Playing State */}
                 {gameState === 'playing' && (

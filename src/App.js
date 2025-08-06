@@ -5,7 +5,6 @@ import {
   Typography, 
   Button, 
   Box, 
-  Container,
   IconButton,
   Menu,
   MenuItem,
@@ -14,7 +13,6 @@ import {
 } from '@mui/material';
 import { 
   Home as HomeIcon, 
-  SportsEsports,
   Menu as MenuIcon
 } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -27,6 +25,7 @@ import Pong from "./games/Pong";
 import Tetris from "./games/Tetris";
 import Frogger from "./games/Frogger";
 import Galaga from "./games/Galaga";
+import PacMan from "./games/PacMan";
 
 const theme = createTheme({
   palette: {
@@ -105,6 +104,7 @@ function Navigation() {
 		{ path: '/tetris', name: 'Tetris', icon: '🧩' },
 		{ path: '/frogger', name: 'Frogger', icon: '🐸' },
 		{ path: '/galaga', name: 'Galaga', icon: '🚀' },
+		{ path: '/pacman', name: 'Pac-Man', icon: '👻' },
 	];
 
 	const handleMenuOpen = (event) => {
@@ -237,6 +237,7 @@ function App() {
 							<Route path="/tetris" element={<Tetris />} />
 							<Route path="/frogger" element={<Frogger />} />
 							<Route path="/galaga" element={<Galaga />} />
+							<Route path="/pacman" element={<PacMan />} />
 						</Routes>
 					</main>
 				</div>

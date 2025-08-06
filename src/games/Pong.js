@@ -28,7 +28,20 @@ import {
 } from '@mui/icons-material';
 import { ThemeProvider } from '@mui/material/styles';
 import { gameThemes } from '../theme/gameTheme';
+import soundGenerator from '../utils/soundUtils';
 import './Pong.css';
+
+// Game constants
+const canvasWidth = 600;
+const canvasHeight = 400;
+const winningScore = 5;
+
+const difficultySettings = {
+  easy: { aiSpeed: 2, ballSpeed: 3, aiAccuracy: 0.7 },
+  medium: { aiSpeed: 4, ballSpeed: 5, aiAccuracy: 0.85 },
+  hard: { aiSpeed: 6, ballSpeed: 7, aiAccuracy: 0.95 },
+  nuclear: { aiSpeed: 8, ballSpeed: 9, aiAccuracy: 1.0 }
+};
 
 const Pong = () => {
   const canvasRef = useRef(null);
@@ -39,16 +52,6 @@ const Pong = () => {
   const [aiScore, setAiScore] = useState(0);
   const [difficulty, setDifficulty] = useState('medium');
   
-  const canvasWidth = 600;
-  const canvasHeight = 400;
-  const winningScore = 5;
-
-  const difficultySettings = {
-    easy: { aiSpeed: 2, ballSpeed: 3, aiAccuracy: 0.7 },
-    medium: { aiSpeed: 4, ballSpeed: 5, aiAccuracy: 0.85 },
-    hard: { aiSpeed: 6, ballSpeed: 7, aiAccuracy: 0.95 },
-    nuclear: { aiSpeed: 8, ballSpeed: 9, aiAccuracy: 1.0 }
-  };
 
   const gameData = useRef({
     paddleHeight: 75,
@@ -66,16 +69,16 @@ const Pong = () => {
 
   const resetBall = useCallback(() => {
     const data = gameData.current;
-    const settings = difficultySettings[difficulty];
     data.ballX = canvasWidth / 2;
     data.ballY = canvasHeight / 2;
     data.ballSpeedX = 0;
     data.ballSpeedY = 0;
     data.serving = true;
     setGameState('serving');
-  }, [difficulty]);
+  }, []);
 
   const serveBall = useCallback(() => {
+    soundGenerator.blip(800, 0.1);
     const data = gameData.current;
     const settings = difficultySettings[difficulty];
     data.ballSpeedX = Math.random() > 0.5 ? settings.ballSpeed : -settings.ballSpeed;
@@ -182,6 +185,7 @@ const Pong = () => {
 
       // Ball collision with top and bottom
       if (data.ballY - data.ballRadius < 0 || data.ballY + data.ballRadius > canvasHeight) {
+        soundGenerator.bounce();
         data.ballSpeedY *= -1;
       }
 
@@ -191,6 +195,7 @@ const Pong = () => {
         data.ballY > data.leftY &&
         data.ballY < data.leftY + data.paddleHeight
       ) {
+        soundGenerator.bounce();
         data.ballSpeedX = Math.abs(data.ballSpeedX);
         // Add spin based on where ball hits paddle
         const hitPosition = (data.ballY - (data.leftY + data.paddleHeight / 2)) / (data.paddleHeight / 2);
@@ -203,6 +208,7 @@ const Pong = () => {
         data.ballY > data.rightY &&
         data.ballY < data.rightY + data.paddleHeight
       ) {
+        soundGenerator.bounce();
         data.ballSpeedX = -Math.abs(data.ballSpeedX);
         const hitPosition = (data.ballY - (data.rightY + data.paddleHeight / 2)) / (data.paddleHeight / 2);
         data.ballSpeedY = hitPosition * 6;
@@ -211,8 +217,6 @@ const Pong = () => {
       // AI movement with difficulty-based accuracy
       const settings = difficultySettings[difficulty];
       const aiCenter = data.rightY + data.paddleHeight / 2;
-      const ballDistance = data.ballY - aiCenter;
-      
       // Add some randomness based on difficulty
       const accuracy = settings.aiAccuracy;
       const targetY = data.ballY + (Math.random() - 0.5) * (1 - accuracy) * 50;
@@ -234,9 +238,11 @@ const Pong = () => {
         setAiScore(prev => {
           const newScore = prev + 1;
           if (newScore >= winningScore) {
+            soundGenerator.gameOver();
             setGameState('gameOver');
             return newScore;
           }
+          soundGenerator.coin();
           resetBall();
           return newScore;
         });
@@ -244,9 +250,11 @@ const Pong = () => {
         setPlayerScore(prev => {
           const newScore = prev + 1;
           if (newScore >= winningScore) {
+            soundGenerator.victory();
             setGameState('gameOver');
             return newScore;
           }
+          soundGenerator.coin();
           resetBall();
           return newScore;
         });
@@ -277,7 +285,9 @@ const Pong = () => {
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
-        if (gameState === 'playing' || gameState === 'paused') {
+        if (gameState === 'serving') {
+          serveBall();
+        } else if (gameState === 'playing' || gameState === 'paused') {
           pauseGame();
         }
       }
@@ -293,7 +303,7 @@ const Pong = () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [gameState, pauseGame, resetBall, winningScore]);
+  }, [gameState, pauseGame, resetBall, serveBall, difficulty]);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -586,7 +596,7 @@ const Pong = () => {
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>⏸️</ListItemIcon>
-                  <ListItemText primary="Press SPACE to pause the game" />
+                  <ListItemText primary="Press SPACE to serve ball or pause the game" />
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>🏆</ListItemIcon>

@@ -28,9 +28,10 @@ import {
   KeyboardArrowRight
 } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import soundGenerator from '../utils/soundUtils';
 import './Frogger.css';
 
-const theme = createTheme({
+const froggerTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
@@ -202,6 +203,7 @@ const Frogger = () => {
 
   const moveFrog = useCallback((direction) => {
     if (gameState !== 'playing') return;
+    soundGenerator.blip(500, 0.05);
 
     setFrog(prevFrog => {
       let newX = prevFrog.x;
@@ -226,6 +228,7 @@ const Frogger = () => {
 
       // Check if reached the top (win condition)
       if (newY <= 20) {
+        soundGenerator.victory();
         setScore(prev => prev + 100 * level);
         setLevel(prev => prev + 1);
         return { x: 200, y: 480 }; // Reset frog position
@@ -348,9 +351,11 @@ const Frogger = () => {
     
     if (collision.type === 'car' || collision.type === 'water') {
       // Frog hit a car or drowned
+      soundGenerator.hit();
       setLives(prev => {
         const newLives = prev - 1;
         if (newLives <= 0) {
+          soundGenerator.gameOver();
           setGameState('gameOver');
         } else {
           setFrog({ x: 200, y: 480 });
@@ -683,7 +688,7 @@ const Frogger = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={froggerTheme}>
       <Box 
         sx={{ 
           minHeight: '100vh', 

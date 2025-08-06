@@ -10,9 +10,7 @@ import {
   Typography,
   Box,
   Chip,
-  Avatar,
   Paper,
-  IconButton
 } from '@mui/material';
 import {
   PlayArrow,
@@ -184,7 +182,19 @@ const Home = () => {
       difficulty: 'Hard',
       players: '1 Player',
       icon: '🚀',
-      color: 'from-indigo-400 to-blue-700'
+      color: 'from-indigo-400 to-blue-700',
+      wip: true
+    },
+    {
+      id: 'pacman',
+      title: 'Pac-Man',
+      description: 'Navigate mazes, collect dots, and avoid ghosts in this arcade legend!',
+      features: ['Classic mazes', 'Power pellets', 'Ghost AI'],
+      difficulty: 'Medium',
+      players: '1 Player',
+      icon: '👻',
+      color: 'from-yellow-400 to-orange-500',
+      wip: true
     }
   ];
 
@@ -286,14 +296,29 @@ const Home = () => {
                         >
                           {game.icon}
                         </Box>
-                        <Typography 
-                          variant="h6" 
-                          fontWeight="bold" 
-                          color="text.primary"
-                          sx={{ fontSize: '1.25rem' }}
-                        >
-                          {game.title}
-                        </Typography>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Typography 
+                            variant="h6" 
+                            fontWeight="bold" 
+                            color="text.primary"
+                            sx={{ fontSize: '1.25rem' }}
+                          >
+                            {game.title}
+                          </Typography>
+                          {game.wip && (
+                            <Chip 
+                              label="WIP" 
+                              size="small"
+                              sx={{ 
+                                bgcolor: 'warning.main', 
+                                color: 'warning.contrastText',
+                                fontSize: '0.65rem',
+                                height: '20px',
+                                fontWeight: 600
+                              }}
+                            />
+                          )}
+                        </Box>
                       </Box>
                       
                       {/* Description */}
