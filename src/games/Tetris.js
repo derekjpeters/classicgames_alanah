@@ -256,6 +256,7 @@ const Tetris = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
 
@@ -264,6 +265,7 @@ const Tetris = () => {
       e.preventDefault();
       
       const touch = e.touches[0];
+      touchStartX = touch.clientX;
       touchStartY = touch.clientY;
       touchStartTime = Date.now();
     };
@@ -273,24 +275,54 @@ const Tetris = () => {
       e.preventDefault();
       
       const touch = e.changedTouches[0];
+      const touchEndX = touch.clientX;
       const touchEndY = touch.clientY;
       const touchEndTime = Date.now();
       
+      const deltaX = touchEndX - touchStartX;
       const deltaY = touchEndY - touchStartY;
       const touchDuration = touchEndTime - touchStartTime;
       
-      // Check if it's a swipe down (minimum 50px movement downward)
-      if (deltaY > 50 && touchDuration < 500) {
-        // Swipe down - move piece down
-        setCurrentPosition(pos => {
-          const newPos = { ...pos, y: pos.y + 1 };
-          const canMove = isValidPosition(currentPiece, newPos, board);
-          if (canMove) {
-            soundGenerator.blip(300, 0.03);
+      // Determine if this is a horizontal or vertical swipe
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+      
+      if (touchDuration < 500 && (absX > 30 || absY > 30)) {
+        if (absX > absY) {
+          // Horizontal swipe
+          if (deltaX > 30) {
+            // Swipe right - move piece right
+            setCurrentPosition(pos => {
+              const newPos = { ...pos, x: pos.x + 1 };
+              const canMove = isValidPosition(currentPiece, newPos, board);
+              if (canMove) {
+                soundGenerator.blip(400, 0.03);
+              }
+              return canMove ? newPos : pos;
+            });
+          } else if (deltaX < -30) {
+            // Swipe left - move piece left
+            setCurrentPosition(pos => {
+              const newPos = { ...pos, x: pos.x - 1 };
+              const canMove = isValidPosition(currentPiece, newPos, board);
+              if (canMove) {
+                soundGenerator.blip(400, 0.03);
+              }
+              return canMove ? newPos : pos;
+            });
           }
-          return canMove ? newPos : pos;
-        });
-      } else if (Math.abs(deltaY) < 30 && touchDuration < 300) {
+        } else if (deltaY > 50) {
+          // Vertical swipe down - move piece down
+          setCurrentPosition(pos => {
+            const newPos = { ...pos, y: pos.y + 1 };
+            const canMove = isValidPosition(currentPiece, newPos, board);
+            if (canMove) {
+              soundGenerator.blip(300, 0.03);
+            }
+            return canMove ? newPos : pos;
+          });
+        }
+      } else if (absX < 30 && absY < 30 && touchDuration < 300) {
         // Tap - rotate piece
         setCurrentPiece(piece => {
           const rotated = rotatePiece(piece);
@@ -682,7 +714,7 @@ const Tetris = () => {
                         <ListItemIcon>
                           <KeyboardArrowLeft color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary={isMobile ? "Tap game board to rotate" : "← → Move piece"} />
+                        <ListItemText primary={isMobile ? "Swipe left/right on board" : "← → Move piece"} />
                       </ListItem>
                       <ListItem>
                         <ListItemIcon>
@@ -694,7 +726,7 @@ const Tetris = () => {
                         <ListItemIcon>
                           <KeyboardArrowUp color="primary" />
                         </ListItemIcon>
-                        <ListItemText primary={isMobile ? "Use arrow buttons below" : "↑ or Space to rotate"} />
+                        <ListItemText primary={isMobile ? "Tap board to rotate or use buttons" : "↑ or Space to rotate"} />
                       </ListItem>
                     </List>
                   </CardContent>
