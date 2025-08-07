@@ -32,42 +32,46 @@ import { gameThemes } from '../theme/gameTheme';
 import soundGenerator from '../utils/soundUtils';
 import './PacMan.css';
 
-// Game constants
-const CELL_SIZE = 20;
-const MAZE_WIDTH = 19;
-const MAZE_HEIGHT = 21;
+// Game constants - Updated to more authentic dimensions
+const CELL_SIZE = 16;
+const MAZE_WIDTH = 28;
+const MAZE_HEIGHT = 23;
 
-// Original Pac-Man maze layout (0=wall, 1=dot, 2=power pellet, 3=empty)
+// Simplified Pac-Man maze layout (0=wall, 1=dot, 2=power pellet, 3=empty/tunnel)
 const MAZE_LAYOUT = [
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0],
-  [0,2,0,0,1,1,1,1,1,0,1,1,1,1,1,0,0,2,0],
-  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0],
-  [0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0],
-  [0,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0],
-  [3,3,3,0,1,0,3,1,1,3,1,1,3,0,1,0,3,3,3],
-  [0,0,0,0,1,0,3,0,3,3,3,0,3,0,1,0,0,0,0],
-  [3,3,3,3,1,1,3,0,3,3,3,0,3,1,1,3,3,3,3],
-  [0,0,0,0,1,0,3,0,0,0,0,0,3,0,1,0,0,0,0],
-  [3,3,3,0,1,0,3,3,3,3,3,3,3,0,1,0,3,3,3],
-  [0,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0],
-  [0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0],
-  [0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0],
-  [0,2,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,2,0],
-  [0,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0],
-  [0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0],
-  [0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0],
-  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0],
+  [0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0],
+  [0,2,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,2,0],
+  [0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0],
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+  [0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0],
+  [0,1,0,0,0,0,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,0,0,0,0,1,0],
+  [0,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,0],
+  [0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
+  [3,3,3,3,3,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,3,3,3,3,3],
+  [3,3,3,3,3,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,3,3,3,3,3],
+  [3,3,3,3,3,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,3,3,3,3,3],
+  [3,3,3,3,3,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,3,3,3,3,3],
+  [0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
+  [0,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,0],
+  [0,1,0,0,0,0,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,0,0,0,0,1,0],
+  [0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0],
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+  [0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0],
+  [0,2,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,2,0],
+  [0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0],
+  [0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0],
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
 
-// Ghost configurations - authentic colors and positions
+// Ghost configurations - updated for simplified maze
 const GHOST_CONFIGS = [
-  { id: 'blinky', color: '#FF0000', homeX: 9, homeY: 9, scatterX: 17, scatterY: 1 },
-  { id: 'pinky', color: '#FFB8DE', homeX: 8, homeY: 9, scatterX: 1, scatterY: 1 },
-  { id: 'inky', color: '#00FFDE', homeX: 10, homeY: 9, scatterX: 17, scatterY: 19 },
-  { id: 'clyde', color: '#FFB852', homeX: 9, homeY: 10, scatterX: 1, scatterY: 19 }
+  { id: 'blinky', color: '#FF0000', homeX: 14, homeY: 10, scatterX: 25, scatterY: 1 },
+  { id: 'pinky', color: '#FFB8DE', homeX: 13, homeY: 10, scatterX: 2, scatterY: 1 },
+  { id: 'inky', color: '#00FFDE', homeX: 15, homeY: 10, scatterX: 25, scatterY: 21 },
+  { id: 'clyde', color: '#FFB852', homeX: 14, homeY: 11, scatterX: 2, scatterY: 21 }
 ];
 
 const PacMan = () => {
@@ -75,11 +79,12 @@ const PacMan = () => {
   const animationRef = useRef(null);
   const gameDataRef = useRef({
     pacman: { 
-      x: 9, y: 15, 
+      x: 14, y: 15, // Valid starting position in simplified maze
       direction: 2, // Start facing left like original
       nextDirection: 2,
       moving: false,
-      animFrame: 0
+      animFrame: 0,
+      speed: 0.1
     },
     ghosts: GHOST_CONFIGS.map(config => ({
       ...config,
@@ -128,11 +133,12 @@ const PacMan = () => {
     
     // Reset Pac-Man
     gameData.pacman = {
-      x: 9, y: 15,
+      x: 14, y: 15,
       direction: 2,
       nextDirection: 2,
       moving: false,
-      animFrame: 0
+      animFrame: 0,
+      speed: 0.1
     };
     
     // Reset ghosts
@@ -166,11 +172,23 @@ const PacMan = () => {
 
   // Check if position is valid
   const isValidPosition = useCallback((x, y) => {
-    const cellX = Math.floor(x);
-    const cellY = Math.floor(y);
+    // Handle tunnel wrapping first
+    let cellX = Math.floor(x);
+    let cellY = Math.floor(y);
     
+    // Check for tunnel areas (allow wrapping on row 9)
+    if (cellY === 9 && (cellX < 0 || cellX >= MAZE_WIDTH)) {
+      return true; // Allow tunnel movement
+    }
+    
+    // Boundary checks
     if (cellX < 0 || cellX >= MAZE_WIDTH || cellY < 0 || cellY >= MAZE_HEIGHT) {
-      return x < 0 || x >= MAZE_WIDTH; // Allow tunnel wrapping
+      return false;
+    }
+    
+    // Ensure maze layout exists and has the row
+    if (!MAZE_LAYOUT || !MAZE_LAYOUT[cellY] || MAZE_LAYOUT[cellY][cellX] === undefined) {
+      return false;
     }
     
     const cell = MAZE_LAYOUT[cellY][cellX];
@@ -196,20 +214,22 @@ const PacMan = () => {
     return { x: newX, y };
   };
 
-  // Update Pac-Man with grid-based movement
+  // Update Pac-Man with smoother movement
   const updatePacMan = useCallback(() => {
     const gameData = gameDataRef.current;
     const pacman = gameData.pacman;
     
-    // Try to change direction if requested
+    // Try to change direction if requested (allow direction change at any time if path is clear)
     if (pacman.nextDirection !== pacman.direction) {
       const nextDir = getDirectionVector(pacman.nextDirection);
-      let testX = pacman.x + nextDir.dx;
-      let testY = pacman.y + nextDir.dy;
+      let testX = pacman.x + nextDir.dx * pacman.speed;
+      let testY = pacman.y + nextDir.dy * pacman.speed;
       
-      // Handle tunnel wrapping
-      if (testX < 0) testX = MAZE_WIDTH - 1;
-      if (testX >= MAZE_WIDTH) testX = 0;
+      // Handle tunnel wrapping on tunnel row (9)
+      if (Math.floor(pacman.y) === 9 || Math.floor(testY) === 9) {
+        if (testX < 0) testX = MAZE_WIDTH - 1;
+        if (testX >= MAZE_WIDTH) testX = 0;
+      }
       
       if (isValidPosition(testX, testY)) {
         pacman.direction = pacman.nextDirection;
@@ -218,12 +238,14 @@ const PacMan = () => {
     
     // Move in current direction
     const dir = getDirectionVector(pacman.direction);
-    let newX = pacman.x + dir.dx;
-    let newY = pacman.y + dir.dy;
+    let newX = pacman.x + dir.dx * pacman.speed;
+    let newY = pacman.y + dir.dy * pacman.speed;
     
-    // Handle tunnel wrapping
-    if (newX < 0) newX = MAZE_WIDTH - 1;
-    if (newX >= MAZE_WIDTH) newX = 0;
+    // Handle tunnel wrapping on tunnel row
+    if (Math.floor(pacman.y) === 9 || Math.floor(newY) === 9) {
+      if (newX < 0) newX = MAZE_WIDTH - 1;
+      if (newX >= MAZE_WIDTH) newX = 0;
+    }
     
     if (isValidPosition(newX, newY)) {
       pacman.x = newX;
@@ -231,8 +253,11 @@ const PacMan = () => {
       pacman.moving = true;
       pacman.animFrame = (pacman.animFrame + 1) % 20;
       
-      // Check for dot collection
-      const dotIndex = gameData.dots.findIndex(dot => dot.x === newX && dot.y === newY);
+      // Check for dot collection (use floor for grid alignment)
+      const gridX = Math.floor(pacman.x + 0.5);
+      const gridY = Math.floor(pacman.y + 0.5);
+      
+      const dotIndex = gameData.dots.findIndex(dot => dot.x === gridX && dot.y === gridY);
       if (dotIndex !== -1) {
         soundGenerator.waka();
         gameData.dots.splice(dotIndex, 1);
@@ -240,7 +265,7 @@ const PacMan = () => {
       }
       
       // Collect power pellets
-      const powerIndex = gameData.powerPellets.findIndex(pellet => pellet.x === newX && pellet.y === newY);
+      const powerIndex = gameData.powerPellets.findIndex(pellet => pellet.x === gridX && pellet.y === gridY);
       if (powerIndex !== -1) {
         soundGenerator.powerUp();
         gameData.powerPellets.splice(powerIndex, 1);
@@ -313,6 +338,16 @@ const PacMan = () => {
           targetX = ghost.homeX;
           targetY = ghost.homeY;
           ghost.speed = 0.12; // Faster when returning
+          
+          // Check if ghost has reached home
+          const distanceToHome = Math.sqrt(
+            Math.pow(ghost.x - ghost.homeX, 2) + Math.pow(ghost.y - ghost.homeY, 2)
+          );
+          if (distanceToHome < 0.5) {
+            ghost.mode = 'scatter';
+            ghost.modeTimer = 420;
+            ghost.speed = 0.08;
+          }
           break;
         default:
           targetX = ghost.x;
@@ -333,7 +368,8 @@ const PacMan = () => {
           const testX = ghost.x + dirVector.dx * ghost.speed;
           const testY = ghost.y + dirVector.dy * ghost.speed;
           
-          if (isValidPosition(testX, testY)) {
+          // Only move if both current and next positions are valid
+          if (isValidPosition(testX, testY) && isValidPosition(ghost.x, ghost.y)) {
             const distance = Math.sqrt(
               Math.pow(testX - targetX, 2) + Math.pow(testY - targetY, 2)
             );
@@ -348,15 +384,33 @@ const PacMan = () => {
         ghost.direction = bestDirection;
       }
       
-      // Move ghost
+      // Move ghost with better collision detection
       const dir = getDirectionVector(ghost.direction);
-      const newX = ghost.x + dir.dx * ghost.speed;
-      const newY = ghost.y + dir.dy * ghost.speed;
+      let newX = ghost.x + dir.dx * ghost.speed;
+      let newY = ghost.y + dir.dy * ghost.speed;
       
+      // Handle tunnel wrapping for ghosts
+      if (Math.floor(ghost.y) === 9) { // Tunnel row
+        if (newX < 0) newX = MAZE_WIDTH - 1;
+        if (newX >= MAZE_WIDTH) newX = 0;
+      }
+      
+      // Only move if position is valid
       if (isValidPosition(newX, newY)) {
-        const wrapped = wrapPosition(newX, newY);
-        ghost.x = wrapped.x;
-        ghost.y = wrapped.y;
+        ghost.x = newX;
+        ghost.y = newY;
+      } else {
+        // If can't move, try to find a different valid direction
+        const validDirections = [0, 1, 2, 3].filter(testDir => {
+          const testVector = getDirectionVector(testDir);
+          const testX = ghost.x + testVector.dx * ghost.speed;
+          const testY = ghost.y + testVector.dy * ghost.speed;
+          return isValidPosition(testX, testY);
+        });
+        
+        if (validDirections.length > 0) {
+          ghost.direction = validDirections[0];
+        }
       }
       
       // Reset speed if not eaten
@@ -393,8 +447,8 @@ const PacMan = () => {
               setGameState('gameOver');
             } else {
               // Reset positions
-              gameData.pacman.x = 9.5;
-              gameData.pacman.y = 15.5;
+              gameData.pacman.x = 14;
+              gameData.pacman.y = 22;
               gameData.pacman.direction = 0;
               gameData.pacman.nextDirection = 0;
               
@@ -423,8 +477,8 @@ const PacMan = () => {
       setTimeout(() => {
         initializeDots();
         const pacman = gameData.pacman;
-        pacman.x = 9;
-        pacman.y = 15;
+        pacman.x = 14;
+        pacman.y = 22;
         pacman.direction = 2;
         pacman.nextDirection = 2;
         
@@ -440,19 +494,14 @@ const PacMan = () => {
     }
   }, [initializeDots]);
 
-  // Game loop with timing control
+  // Game loop with smoother timing
   const gameLoop = useCallback(() => {
     if (gameState === 'playing') {
       const gameData = gameDataRef.current;
       
-      // Update every 4 frames for classic Pac-Man speed
-      if (gameData.gameTime % 4 === 0) {
-        updatePacMan();
-      }
-      
-      if (gameData.gameTime % 5 === 0) {
-        updateGhosts();
-      }
+      // Update every frame for smooth movement
+      updatePacMan();
+      updateGhosts();
       
       checkCollisions();
       checkLevelComplete();
