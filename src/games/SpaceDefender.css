@@ -1,0 +1,167 @@
+/* Space Defender Game Styles */
+
+.space-defender-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000011 0%, #000033 50%, #001122 100%);
+  padding: 2rem 0;
+}
+
+.space-defender-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.space-defender-title {
+  font-weight: 800;
+  background: linear-gradient(135deg, #00AAFF, #0099CC, #FFFF00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.space-defender-canvas {
+  border: 2px solid #00AAFF;
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 170, 255, 0.15),
+    inset 0 0 20px rgba(0, 170, 255, 0.05);
+  image-rendering: pixelated;
+  background: radial-gradient(ellipse at center, #000033 0%, #000011 100%);
+}
+
+.space-defender-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+}
+
+.space-defender-card {
+  max-width: 300px;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+}
+
+.space-defender-controls {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.space-defender-touch-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00AAFF, #0099CC);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.space-defender-touch-button:hover,
+.space-defender-touch-button:active {
+  background: linear-gradient(135deg, #0099CC, #007799);
+  transform: scale(0.95);
+}
+
+.space-defender-fire-button {
+  background: linear-gradient(135deg, #FF6600, #FF4444);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.space-defender-fire-button:hover,
+.space-defender-fire-button:active {
+  background: linear-gradient(135deg, #FF4444, #CC3333);
+  transform: scale(0.95);
+}
+
+.space-defender-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.space-defender-stat-chip {
+  font-weight: bold;
+  background: rgba(0, 170, 255, 0.1);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .space-defender-container {
+    padding: 1rem 0;
+  }
+  
+  .space-defender-canvas {
+    max-width: 350px;
+    height: auto;
+  }
+  
+  .space-defender-title {
+    font-size: 2rem !important;
+  }
+  
+  .space-defender-touch-button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .space-defender-fire-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Animation effects */
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.space-defender-star {
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes powerupGlow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.space-defender-powerup {
+  animation: powerupGlow 1s ease-in-out infinite;
+}
+
+/* Responsive typography */
+@media (max-width: 600px) {
+  .space-defender-title {
+    font-size: 1.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .space-defender-title {
+    font-size: 1.6rem !important;
+  }
+}

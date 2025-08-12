@@ -181,20 +181,19 @@ const Home = () => {
       features: ['Formation flying', 'Enemy patterns', 'Wave progression'],
       difficulty: 'Hard',
       players: '1 Player',
-      icon: '🚀',
+      icon: '👾',
       color: 'from-indigo-400 to-blue-700',
       wip: true
     },
     {
-      id: 'pacman',
-      title: 'Pac-Man',
-      description: 'Navigate mazes, collect dots, and avoid ghosts in this arcade legend!',
-      features: ['Classic mazes', 'Power pellets', 'Ghost AI'],
+      id: 'spacedefender',
+      title: 'Space Defender',
+      description: 'Defend Earth from waves of alien invaders in this action-packed space shooter!',
+      features: ['Wave-based enemies', 'Power-ups', 'Particle effects'],
       difficulty: 'Medium',
       players: '1 Player',
-      icon: '👻',
-      color: 'from-yellow-400 to-orange-500',
-      wip: true
+      icon: '🚀',
+      color: 'from-blue-400 to-cyan-500'
     }
   ];
 

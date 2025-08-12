@@ -25,7 +25,7 @@ import Pong from "./games/Pong";
 import Tetris from "./games/Tetris";
 import Frogger from "./games/Frogger";
 import Galaga from "./games/Galaga";
-import PacMan from "./games/PacMan";
+import SpaceDefender from "./games/SpaceDefender";
 
 const theme = createTheme({
   palette: {
@@ -103,8 +103,8 @@ function Navigation() {
 		{ path: '/pong', name: 'Pong', icon: '🏓' },
 		{ path: '/tetris', name: 'Tetris', icon: '🧩' },
 		{ path: '/frogger', name: 'Frogger', icon: '🐸' },
-		{ path: '/galaga', name: 'Galaga', icon: '🚀' },
-		{ path: '/pacman', name: 'Pac-Man', icon: '👻' },
+		{ path: '/galaga', name: 'Galaga', icon: '👾' },
+		{ path: '/spacedefender', name: 'Space Defender', icon: '🚀' },
 	];
 
 	const handleMenuOpen = (event) => {
@@ -237,7 +237,7 @@ function App() {
 							<Route path="/tetris" element={<Tetris />} />
 							<Route path="/frogger" element={<Frogger />} />
 							<Route path="/galaga" element={<Galaga />} />
-							<Route path="/pacman" element={<PacMan />} />
+							<Route path="/spacedefender" element={<SpaceDefender />} />
 						</Routes>
 					</main>
 				</div>
