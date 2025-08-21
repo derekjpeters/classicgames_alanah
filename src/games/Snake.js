@@ -90,37 +90,45 @@ const Snake = () => {
       switch (e.key) {
         case 'ArrowUp': 
           e.preventDefault(); // Prevent page scroll
-          if (direction !== 'DOWN' && snake.length > 1) {
-            // Prevent reverse if snake has more than 1 segment
-            if (direction !== 'UP') setDirection('UP');
-          } else if (snake.length === 1) {
+          if (snake.length > 1) {
+            // Only allow UP if not currently going DOWN
+            if (direction !== 'DOWN') {
+              setDirection('UP');
+            }
+          } else {
             setDirection('UP');
           }
           break;
         case 'ArrowDown': 
           e.preventDefault(); // Prevent page scroll
-          if (direction !== 'UP' && snake.length > 1) {
-            // Prevent reverse if snake has more than 1 segment
-            if (direction !== 'DOWN') setDirection('DOWN');
-          } else if (snake.length === 1) {
+          if (snake.length > 1) {
+            // Only allow DOWN if not currently going UP
+            if (direction !== 'UP') {
+              setDirection('DOWN');
+            }
+          } else {
             setDirection('DOWN');
           }
           break;
         case 'ArrowLeft': 
           e.preventDefault(); // Prevent page scroll
-          if (direction !== 'RIGHT' && snake.length > 1) {
-            // Prevent reverse if snake has more than 1 segment
-            if (direction !== 'LEFT') setDirection('LEFT');
-          } else if (snake.length === 1) {
+          if (snake.length > 1) {
+            // Only allow LEFT if not currently going RIGHT
+            if (direction !== 'RIGHT') {
+              setDirection('LEFT');
+            }
+          } else {
             setDirection('LEFT');
           }
           break;
         case 'ArrowRight': 
           e.preventDefault(); // Prevent page scroll
-          if (direction !== 'LEFT' && snake.length > 1) {
-            // Prevent reverse if snake has more than 1 segment
-            if (direction !== 'RIGHT') setDirection('RIGHT');
-          } else if (snake.length === 1) {
+          if (snake.length > 1) {
+            // Only allow RIGHT if not currently going LEFT
+            if (direction !== 'LEFT') {
+              setDirection('RIGHT');
+            }
+          } else {
             setDirection('RIGHT');
           }
           break;

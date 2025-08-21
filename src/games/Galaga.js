@@ -10,19 +10,14 @@ import {
   Stack,
   Card,
   CardContent,
-  IconButton,
   useMediaQuery,
   useTheme
 } from '@mui/material';
 import { 
   PlayArrow, 
-  RestartAlt,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  RadioButtonUnchecked
+  RestartAlt
 } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import soundGenerator from '../utils/soundUtils';
 import './Galaga.css';
 
 const theme = createTheme({
@@ -97,20 +92,6 @@ const theme = createTheme({
   },
 });
 
-// Game constants
-const canvasWidth = 400;
-const canvasHeight = 500;
-const playerSpeed = 5;
-const bulletSpeed = 8;
-const enemyBulletSpeed = 3;
-
-// Enemy types
-const enemyTypes = {
-  bee: { points: 50, color: '#FFD700', width: 20, height: 15 },
-  butterfly: { points: 80, color: '#FF69B4', width: 22, height: 18 },
-  boss: { points: 150, color: '#FF4500', width: 25, height: 20 }
-};
-
 const Galaga = () => {
   const canvasRef = useRef(null);
   const intervalRef = useRef(null);
@@ -125,6 +106,18 @@ const Galaga = () => {
   const [level, setLevel] = useState(1);
   const [wave, setWave] = useState(1);
 
+  const canvasWidth = 400;
+  const canvasHeight = 500;
+  const playerSpeed = 5;
+  const bulletSpeed = 8;
+  const enemyBulletSpeed = 3;
+
+  // Enemy types
+  const enemyTypes = {
+    bee: { points: 50, color: '#FFD700', width: 20, height: 15 },
+    butterfly: { points: 80, color: '#FF69B4', width: 22, height: 18 },
+    boss: { points: 150, color: '#FF4500', width: 25, height: 20 }
+  };
 
   // Initialize enemy formation
   const initializeEnemies = useCallback(() => {
@@ -233,12 +226,11 @@ const Galaga = () => {
 
     setPlayer(prev => {
       let newX = prev.x;
-      const smoothSpeed = 3; // Reduced for smoother movement
       
       if (direction === 'left') {
-        newX = Math.max(0, prev.x - smoothSpeed);
+        newX = Math.max(0, prev.x - playerSpeed);
       } else if (direction === 'right') {
-        newX = Math.min(canvasWidth - prev.width, prev.x + smoothSpeed);
+        newX = Math.min(canvasWidth - prev.width, prev.x + playerSpeed);
       }
       
       return { ...prev, x: newX };
@@ -248,7 +240,6 @@ const Galaga = () => {
   const shoot = useCallback(() => {
     if (gameState !== 'playing') return;
 
-    soundGenerator.shoot();
     setBullets(prev => [
       ...prev,
       {
@@ -318,13 +309,13 @@ const Galaga = () => {
           newEnemy.y = target.y;
           newEnemy.diveIndex++;
         } else {
-          // Return to formation after completing dive
-          newEnemy.x = newEnemy.formationX;
-          newEnemy.y = newEnemy.formationY;
-          newEnemy.diving = false;
-          newEnemy.inFormation = true;
-          newEnemy.divePattern = [];
-          newEnemy.diveIndex = 0;
+          // Return to formation or leave screen
+          if (newEnemy.y > canvasHeight) {
+            newEnemy.x = newEnemy.formationX;
+            newEnemy.y = -50;
+            newEnemy.diving = false;
+            newEnemy.inFormation = true;
+          }
         }
       }
 
@@ -364,7 +355,6 @@ const Galaga = () => {
               newBullets = newBullets.filter((_, i) => i !== bulletIndex);
               newEnemies = newEnemies.filter((_, i) => i !== enemyIndex);
               
-              soundGenerator.coin();
               setScore(prevScore => prevScore + enemy.points);
             }
           });
@@ -388,10 +378,7 @@ const Galaga = () => {
           setLives(prevLives => {
             const newLives = prevLives - 1;
             if (newLives <= 0) {
-              soundGenerator.gameOver();
               setGameState('gameOver');
-            } else {
-              soundGenerator.hit();
             }
             return newLives;
           });
@@ -600,7 +587,7 @@ const Galaga = () => {
       if (keys['ArrowRight'] || keys['d'] || keys['D']) {
         movePlayer('right');
       }
-    }, 8); // Faster polling for smoother movement
+    }, 16);
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
@@ -619,31 +606,6 @@ const Galaga = () => {
 
   const themeHook = useTheme();
   const isMobile = useMediaQuery(themeHook.breakpoints.down('md'));
-
-  // Mobile touch controls
-  const handleTouchControl = useCallback((action) => {
-    if (gameState !== 'playing') return;
-    
-    switch (action) {
-      case 'left':
-        setPlayer(prev => ({
-          ...prev,
-          x: Math.max(0, prev.x - 8)
-        }));
-        break;
-      case 'right':
-        setPlayer(prev => ({
-          ...prev,
-          x: Math.min(canvasWidth - prev.width, prev.x + 8)
-        }));
-        break;
-      case 'shoot':
-        shoot();
-        break;
-      default:
-        break;
-    }
-  }, [gameState, shoot]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -819,72 +781,6 @@ const Galaga = () => {
             </Paper>
           </Box>
 
-          {/* Mobile Touch Controls */}
-          {isMobile && gameState === 'playing' && (
-            <Card sx={{ maxWidth: 400, mx: 'auto', mb: 3 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom color="primary" textAlign="center">
-                  Touch Controls
-                </Typography>
-                
-                {/* Control Layout */}
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  {/* Left Control */}
-                  <IconButton
-                    onClick={() => handleTouchControl('left')}
-                    disabled={gameState !== 'playing'}
-                    sx={{
-                      width: 70,
-                      height: 70,
-                      bgcolor: 'primary.main',
-                      color: 'white',
-                      '&:hover': { bgcolor: 'primary.dark' },
-                      '&:disabled': { bgcolor: 'grey.600' }
-                    }}
-                  >
-                    <KeyboardArrowLeft fontSize="large" />
-                  </IconButton>
-                  
-                  {/* Shoot Control */}
-                  <IconButton
-                    onClick={() => handleTouchControl('shoot')}
-                    disabled={gameState !== 'playing'}
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      bgcolor: 'error.main',
-                      color: 'white',
-                      '&:hover': { bgcolor: 'error.dark' },
-                      '&:disabled': { bgcolor: 'grey.600' }
-                    }}
-                  >
-                    <RadioButtonUnchecked fontSize="large" />
-                  </IconButton>
-                  
-                  {/* Right Control */}
-                  <IconButton
-                    onClick={() => handleTouchControl('right')}
-                    disabled={gameState !== 'playing'}
-                    sx={{
-                      width: 70,
-                      height: 70,
-                      bgcolor: 'primary.main',
-                      color: 'white',
-                      '&:hover': { bgcolor: 'primary.dark' },
-                      '&:disabled': { bgcolor: 'grey.600' }
-                    }}
-                  >
-                    <KeyboardArrowRight fontSize="large" />
-                  </IconButton>
-                </Box>
-                
-                <Typography variant="caption" display="block" textAlign="center" mt={1} color="text.secondary">
-                  Left/Right: Move • Center: Shoot
-                </Typography>
-              </CardContent>
-            </Card>
-          )}
-          
           {/* Controls */}
           <Card sx={{ maxWidth: 600, mx: 'auto' }}>
             <CardContent>
@@ -893,10 +789,10 @@ const Galaga = () => {
               </Typography>
               <Box component="ul" sx={{ pl: 2, m: 0 }}>
                 <Box component="li" sx={{ mb: 0.5, color: 'text.secondary' }}>
-                  {isMobile ? 'Use touch controls above to move and shoot' : 'Use arrow keys or A/D to move your ship'}
+                  Use arrow keys or A/D to move your ship
                 </Box>
                 <Box component="li" sx={{ mb: 0.5, color: 'text.secondary' }}>
-                  {isMobile ? 'Tap the center button to shoot' : 'Press spacebar to shoot'}
+                  Press spacebar to shoot
                 </Box>
                 <Box component="li" sx={{ mb: 0.5, color: 'text.secondary' }}>
                   Destroy alien formations for points

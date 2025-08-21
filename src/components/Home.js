@@ -175,15 +175,14 @@ const Home = () => {
       color: 'from-emerald-400 to-green-600'
     },
     {
-      id: 'galaga',
-      title: 'Galaga',
-      description: 'Enhanced space shooter with formation flying enemies. Defend Earth!',
-      features: ['Formation flying', 'Enemy patterns', 'Wave progression'],
-      difficulty: 'Hard',
+      id: 'joust',
+      title: 'Joust',
+      description: 'Fly your ostrich and defeat enemies by landing on them from above!',
+      features: ['Flying mechanics', 'Platform combat', 'Enemy AI'],
+      difficulty: 'Medium',
       players: '1 Player',
-      icon: '👾',
-      color: 'from-indigo-400 to-blue-700',
-      wip: true
+      icon: '🦅',
+      color: 'from-amber-400 to-orange-600'
     },
     {
       id: 'spacedefender',

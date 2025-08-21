@@ -24,7 +24,7 @@ import Snake from "./games/Snake";
 import Pong from "./games/Pong";
 import Tetris from "./games/Tetris";
 import Frogger from "./games/Frogger";
-import Galaga from "./games/Galaga";
+import Joust from "./games/Joust";
 import SpaceDefender from "./games/SpaceDefender";
 
 const theme = createTheme({
@@ -103,7 +103,7 @@ function Navigation() {
 		{ path: '/pong', name: 'Pong', icon: '🏓' },
 		{ path: '/tetris', name: 'Tetris', icon: '🧩' },
 		{ path: '/frogger', name: 'Frogger', icon: '🐸' },
-		{ path: '/galaga', name: 'Galaga', icon: '👾' },
+		{ path: '/joust', name: 'Joust', icon: '🦅' },
 		{ path: '/spacedefender', name: 'Space Defender', icon: '🚀' },
 	];
 
@@ -236,7 +236,7 @@ function App() {
 							<Route path="/pong" element={<Pong />} />
 							<Route path="/tetris" element={<Tetris />} />
 							<Route path="/frogger" element={<Frogger />} />
-							<Route path="/galaga" element={<Galaga />} />
+							<Route path="/joust" element={<Joust />} />
 							<Route path="/spacedefender" element={<SpaceDefender />} />
 						</Routes>
 					</main>
