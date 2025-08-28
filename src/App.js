@@ -24,6 +24,7 @@ import Snake from "./games/Snake";
 import Pong from "./games/Pong";
 import Tetris from "./games/Tetris";
 import Frogger from "./games/Frogger";
+import CrossyRoad3D from "./games/CrossyRoad3D";
 import Joust from "./games/Joust";
 import SpaceDefender from "./games/SpaceDefender";
 
@@ -103,6 +104,7 @@ function Navigation() {
 		{ path: '/pong', name: 'Pong', icon: '🏓' },
 		{ path: '/tetris', name: 'Tetris', icon: '🧩' },
 		{ path: '/frogger', name: 'Frogger', icon: '🐸' },
+		{ path: '/crossyroad3d', name: 'Crossy Road 3D', icon: '🎮' },
 		{ path: '/joust', name: 'Joust', icon: '🦅' },
 		{ path: '/spacedefender', name: 'Space Defender', icon: '🚀' },
 	];
@@ -236,6 +238,7 @@ function App() {
 							<Route path="/pong" element={<Pong />} />
 							<Route path="/tetris" element={<Tetris />} />
 							<Route path="/frogger" element={<Frogger />} />
+							<Route path="/crossyroad3d" element={<CrossyRoad3D />} />
 							<Route path="/joust" element={<Joust />} />
 							<Route path="/spacedefender" element={<SpaceDefender />} />
 						</Routes>

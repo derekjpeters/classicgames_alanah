@@ -1,6 +1,6 @@
 # 🎮 Classic Games Collection
 
-A modern recreation of timeless arcade classics built with React and Material-UI. Experience the nostalgia of Snake, Pong, Tic Tac Toe, Tetris, Frogger, Galaga, and Pac-Man with contemporary design, responsive layouts, and smooth gameplay on any device.
+A modern recreation of timeless arcade classics built with React and Material-UI. Experience the nostalgia of Snake, Pong, Tic Tac Toe, Tetris, Frogger, Crossy Road 3D, and more with contemporary design, responsive layouts, and smooth gameplay on any device.
 
 ⚠️ **Please Note**: Some games are currently work-in-progress and may have gameplay issues. See the [Game Status](#-game-status) section below for details.
 
@@ -12,6 +12,7 @@ A modern recreation of timeless arcade classics built with React and Material-UI
 - **Tic Tac Toe** - Strategic tournament-style gameplay with custom player names and best-of-5 format
 - **Tetris** - The iconic block-stacking puzzle game with falling pieces and line clearing
 - **🆕 Frogger** - Cross roads and rivers while avoiding obstacles with enhanced collision detection
+- **🆕 Crossy Road 3D** - Experience the classic crossing game in stunning 3D with Three.js graphics
 - **🆕 Galaga** - Enhanced space shooter with formation flying enemies and modernized graphics ⚠️ *Work in Progress*
 - **🆕 Pac-Man** - Navigate mazes, collect dots, and avoid ghosts ⚠️ *Work in Progress*
 
@@ -64,6 +65,7 @@ A modern recreation of timeless arcade classics built with React and Material-UI
 - **⭕ Tic Tac Toe** - Complete tournament-style gameplay
 - **🧩 Tetris** - Full block-stacking game with line clearing
 - **🐸 Frogger** - Complete cross-the-road gameplay with mobile touch controls
+- **🎮 Crossy Road 3D** - Immersive 3D crossing game with realistic physics and 3D graphics
 
 ### ⚠️ **Work in Progress Games**
 - **🚀 Galaga** - *Known Issues*:
@@ -128,6 +130,15 @@ npm run build
 6. Reach the top safe zone to advance to the next level
 7. Each level increases speed and difficulty
 
+### 🎮 Crossy Road 3D
+1. Click "Start Game" to begin
+2. Use arrow keys or WASD (or touch controls on mobile) to move
+3. Navigate forward, backward, left, and right through the 3D world
+4. Cross roads without getting hit by moving cars
+5. Jump on logs to cross water safely - don't fall in!
+6. Reach the golden safe zone to advance to the next level
+7. Experience realistic 3D physics and immersive gameplay
+
 ### 🚀 Galaga
 1. Click "Start Game" to begin
 2. Use arrow keys or A/D to move your spaceship
@@ -142,7 +153,10 @@ npm run build
 - **React** - Frontend framework
 - **Material-UI (MUI)** - Modern React component library
 - **React Router** - Navigation and routing
-- **HTML5 Canvas** - Game rendering and graphics
+- **Three.js** - 3D graphics library for immersive gameplay
+- **React Three Fiber** - React renderer for Three.js
+- **React Three Drei** - Useful helpers for React Three Fiber
+- **HTML5 Canvas** - 2D game rendering and graphics
 - **JavaScript ES6+** - Modern JavaScript features
 - **CSS3** - Custom styling and animations
 
@@ -191,6 +205,16 @@ npm run build
 - **Enhanced Collision Detection** - Precise hitboxes for fair gameplay
 - **Modern Sprites** - Detailed car, log, turtle, and frog graphics
 - **Mobile Touch Controls** - Responsive touch interface for mobile devices
+
+### 🎮 Crossy Road 3D
+- **Immersive 3D Graphics** - Built with Three.js for realistic 3D rendering
+- **Multi-Directional Movement** - Navigate forward, backward, left, and right in 3D space
+- **Dynamic Camera System** - Smooth camera that follows the player through the world
+- **Realistic Physics** - Proper collision detection and movement in 3D space
+- **3D Obstacle Variety** - Cars, logs, and environmental hazards in full 3D
+- **Level Progression** - Increasing difficulty with each level advancement
+- **Mobile-Friendly Controls** - Touch interface optimized for mobile 3D gameplay
+- **Performance Optimized** - Smooth 60 FPS gameplay with efficient 3D rendering
 
 ### 🚀 Galaga
 - **Formation Flying Enemies** - Classic enemy arrangements (bees, butterflies, boss Galaga)
@@ -257,6 +281,8 @@ src/
 │   ├── Tetris.css       # Tetris game styles
 │   ├── Frogger.js       # Frogger game with touch controls
 │   ├── Frogger.css      # Frogger game styles
+│   ├── CrossyRoad3D.js  # 3D crossing game with Three.js
+│   ├── CrossyRoad3D.css # Crossy Road 3D styles
 │   ├── Galaga.js        # Galaga space shooter
 │   └── Galaga.css       # Galaga game styles
 ├── App.js               # Main app with Material-UI navigation

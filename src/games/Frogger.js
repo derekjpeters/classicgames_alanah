@@ -108,7 +108,13 @@ const Frogger = () => {
   const intervalRef = useRef(null);
   
   const [gameState, setGameState] = useState('start'); // 'start', 'playing', 'gameOver', 'won'
-  const [frog, setFrog] = useState({ x: 200, y: 480 });
+  const [frog, setFrog] = useState({ 
+    x: 200, 
+    y: 480, 
+    direction: 'UP', 
+    isJumping: false, 
+    jumpProgress: 0 
+  });
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
@@ -132,15 +138,29 @@ const Frogger = () => {
     // Road lanes (cars) - positioned in road zone (200-400)
     for (let lane = 0; lane < 5; lane++) {
       const y = 200 + (lane * laneHeight);
-      const speed = (lane % 2 === 0 ? 2 : -2) * (1 + level * 0.2);
+      const baseSpeed = (lane % 2 === 0 ? 2 : -2) * (1 + level * 0.2);
       
-      for (let i = 0; i < 3; i++) {
+      // Randomize car count per lane (2-4 cars)
+      const carCount = 2 + Math.floor(Math.random() * 3);
+      
+      for (let i = 0; i < carCount; i++) {
+        // Add randomization to spacing and positioning
+        const minSpacing = 80;
+        const maxSpacing = 200;
+        const randomSpacing = minSpacing + Math.random() * (maxSpacing - minSpacing);
+        
+        // Random starting offset for each lane
+        const laneOffset = Math.random() * 100;
+        
+        // Slight speed variation for each car
+        const speedVariation = 0.5 + Math.random() * 1; // 0.5x to 1.5x speed
+        
         newCars.push({
-          x: i * 150 + (lane % 2 === 0 ? 0 : 200),
-          y: y + 10, // Center cars in lanes better
+          x: (i * randomSpacing + laneOffset + (lane % 2 === 0 ? 0 : 200)) % (canvasWidth + 100),
+          y: y + 10,
           width: 40,
           height: 20,
-          speed: speed,
+          speed: baseSpeed * speedVariation,
           color: `hsl(${Math.random() * 360}, 70%, 50%)`
         });
       }
@@ -184,7 +204,7 @@ const Frogger = () => {
   }, [level, laneHeight]);
 
   const resetGame = useCallback(() => {
-    setFrog({ x: 200, y: 480 });
+    setFrog({ x: 200, y: 480, direction: 'UP', isJumping: false, jumpProgress: 0 });
     setScore(0);
     setLives(3);
     setLevel(1);
@@ -203,9 +223,12 @@ const Frogger = () => {
 
   const moveFrog = useCallback((direction) => {
     if (gameState !== 'playing') return;
-    soundGenerator.blip(500, 0.05);
-
+    
     setFrog(prevFrog => {
+      // Don't allow movement if already jumping
+      if (prevFrog.isJumping) return prevFrog;
+      
+      soundGenerator.blip(500, 0.05);
       let newX = prevFrog.x;
       let newY = prevFrog.y;
 
@@ -231,10 +254,17 @@ const Frogger = () => {
         soundGenerator.victory();
         setScore(prev => prev + 100 * level);
         setLevel(prev => prev + 1);
-        return { x: 200, y: 480 }; // Reset frog position
+        return { x: 200, y: 480, direction: 'UP', isJumping: false, jumpProgress: 0 };
       }
 
-      return { x: newX, y: newY };
+      // Start jump animation
+      return { 
+        x: newX, 
+        y: newY, 
+        direction: direction, 
+        isJumping: true, 
+        jumpProgress: 0 
+      };
     });
   }, [gameState, level, canvasWidth, frogSize]);
 
@@ -308,6 +338,18 @@ const Frogger = () => {
   const updateGame = useCallback(() => {
     if (gameState !== 'playing') return;
 
+    // Update frog jump animation
+    setFrog(prevFrog => {
+      if (prevFrog.isJumping) {
+        const newProgress = prevFrog.jumpProgress + 0.2;
+        if (newProgress >= 1) {
+          return { ...prevFrog, isJumping: false, jumpProgress: 0 };
+        }
+        return { ...prevFrog, jumpProgress: newProgress };
+      }
+      return prevFrog;
+    });
+
     // Update cars
     setCars(prevCars => 
       prevCars.map(car => ({
@@ -358,7 +400,7 @@ const Frogger = () => {
           soundGenerator.gameOver();
           setGameState('gameOver');
         } else {
-          setFrog({ x: 200, y: 480 });
+          setFrog({ x: 200, y: 480, direction: 'UP', isJumping: false, jumpProgress: 0 });
         }
         return newLives;
       });
@@ -383,7 +425,7 @@ const Frogger = () => {
         if (newLives <= 0) {
           setGameState('gameOver');
         } else {
-          setFrog({ x: 200, y: 480 });
+          setFrog({ x: 200, y: 480, direction: 'UP', isJumping: false, jumpProgress: 0 });
         }
         return newLives;
       });
@@ -564,53 +606,137 @@ const Frogger = () => {
       }
     });
 
-    // Draw frog with detailed sprite
+    // Draw realistic jumping frog
     ctx.save();
     ctx.translate(frog.x + frogSize/2, frog.y + frogSize/2);
     
-    // Frog body
+    // Calculate jump height and leg extension
+    const jumpHeight = frog.isJumping ? Math.sin(frog.jumpProgress * Math.PI) * 8 : 0;
+    const legExtension = frog.isJumping ? frog.jumpProgress * 4 : 0;
+    const bodySquash = frog.isJumping ? 1 - (frog.jumpProgress * 0.3) : 1;
+    
+    // Rotate frog based on direction
+    let rotation = 0;
+    switch (frog.direction) {
+      case 'UP': rotation = 0; break;
+      case 'DOWN': rotation = Math.PI; break;
+      case 'LEFT': rotation = -Math.PI/2; break;
+      case 'RIGHT': rotation = Math.PI/2; break;
+    }
+    ctx.rotate(rotation);
+    
+    // Offset for jump
+    ctx.translate(0, -jumpHeight);
+    
+    // Back legs (extended during jump)
+    ctx.fillStyle = '#228B22';
+    ctx.save();
+    
+    // Left back leg
+    ctx.beginPath();
+    ctx.ellipse(-7 - legExtension, 5 + legExtension, 4, 2 + legExtension, -0.8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Right back leg  
+    ctx.beginPath();
+    ctx.ellipse(7 + legExtension, 5 + legExtension, 4, 2 + legExtension, 0.8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Back feet (webbed)
+    ctx.fillStyle = '#1a5f1a';
+    for (let side of [-1, 1]) {
+      ctx.save();
+      ctx.translate(side * (7 + legExtension), 7 + legExtension);
+      
+      // Main foot pad
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 2.5, 1.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Webbed toes
+      ctx.strokeStyle = '#228B22';
+      ctx.lineWidth = 1.5;
+      for (let toe = -1; toe <= 1; toe++) {
+        ctx.beginPath();
+        ctx.moveTo(toe * 1.5, -1);
+        ctx.lineTo(toe * 2, -3);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    
+    ctx.restore();
+    
+    // Frog body with squash and stretch
     ctx.fillStyle = '#32CD32';
     ctx.beginPath();
-    ctx.ellipse(0, 2, 8, 6, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 2, 9, 7 * bodySquash, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Frog head
+    // Body spots for realism
+    ctx.fillStyle = '#228B22';
+    for (let spot of [{x: -3, y: 1}, {x: 3, y: 2}, {x: 0, y: 4}, {x: -2, y: 5}]) {
+      ctx.beginPath();
+      ctx.ellipse(spot.x, spot.y, 1, 0.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Frog head (more realistic shape)
     ctx.fillStyle = '#00FF00';
     ctx.beginPath();
-    ctx.ellipse(0, -2, 6, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -3, 7, 6 * bodySquash, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Frog legs
-    ctx.fillStyle = '#228B22';
-    ctx.beginPath();
-    // Back legs
-    ctx.ellipse(-6, 4, 3, 2, -0.5, 0, Math.PI * 2);
-    ctx.ellipse(6, 4, 3, 2, 0.5, 0, Math.PI * 2);
-    // Front legs
-    ctx.ellipse(-4, 0, 2, 1.5, -0.3, 0, Math.PI * 2);
-    ctx.ellipse(4, 0, 2, 1.5, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Frog eyes
+    // Prominent frog eyes (bulging)
     ctx.fillStyle = '#FFD700';
+    ctx.save();
+    
+    // Left eye
     ctx.beginPath();
-    ctx.arc(-3, -4, 2, 0, Math.PI * 2);
-    ctx.arc(3, -4, 2, 0, Math.PI * 2);
+    ctx.ellipse(-4, -6, 3, 3 * bodySquash, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Eye pupils
+    // Right eye
+    ctx.beginPath();
+    ctx.ellipse(4, -6, 3, 3 * bodySquash, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Eye pupils with directional gaze
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(-3, -4, 1, 0, Math.PI * 2);
-    ctx.arc(3, -4, 1, 0, Math.PI * 2);
+    ctx.ellipse(-4, -6 + (jumpHeight * 0.1), 1.5, 1.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(4, -6 + (jumpHeight * 0.1), 1.5, 1.5, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Frog mouth
-    ctx.strokeStyle = '#228B22';
-    ctx.lineWidth = 1;
+    // Eye shine for life-like appearance
+    ctx.fillStyle = '#FFF';
     ctx.beginPath();
-    ctx.arc(0, -1, 2, 0, Math.PI);
+    ctx.ellipse(-4.5, -6.5, 0.5, 0.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(3.5, -6.5, 0.5, 0.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+    
+    // Front legs (smaller, close to body)
+    ctx.fillStyle = '#228B22';
+    ctx.beginPath();
+    ctx.ellipse(-5, 0, 2.5, 2, -0.3, 0, Math.PI * 2);
+    ctx.ellipse(5, 0, 2.5, 2, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Realistic frog mouth
+    ctx.strokeStyle = '#1a5f1a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, -1, 3, 0.2, Math.PI - 0.2);
     ctx.stroke();
+    
+    // Nostril details
+    ctx.fillStyle = '#1a5f1a';
+    ctx.beginPath();
+    ctx.ellipse(-1.5, -2, 0.5, 0.3, 0, 0, Math.PI * 2);
+    ctx.ellipse(1.5, -2, 0.5, 0.3, 0, 0, Math.PI * 2);
+    ctx.fill();
     
     ctx.restore();
 

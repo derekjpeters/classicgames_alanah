@@ -175,6 +175,16 @@ const Home = () => {
       color: 'from-emerald-400 to-green-600'
     },
     {
+      id: 'crossyroad3d',
+      title: 'Crossy Road 3D',
+      description: 'Navigate through a 3D world of roads and rivers. Experience the classic in stunning 3D!',
+      features: ['3D graphics', 'Immersive gameplay', 'Realistic physics'],
+      difficulty: 'Medium',
+      players: '1 Player',
+      icon: '🎮',
+      color: 'from-purple-400 to-indigo-600'
+    },
+    {
       id: 'joust',
       title: 'Joust',
       description: 'Fly your ostrich and defeat enemies by landing on them from above!',
